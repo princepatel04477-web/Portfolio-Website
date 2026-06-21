@@ -568,8 +568,8 @@ function App() {
     // ----------------------------------------------------
     // ScrollTrigger 1: Pinned 3D card flips & translations
     // ----------------------------------------------------
-    const xRight = () => Math.min(420, window.innerWidth * 0.25);
-    const yDown1 = () => 70;
+    const xRight = () => window.innerWidth <= 768 ? 0 : Math.min(420, window.innerWidth * 0.25);
+    const yDown1 = () => window.innerWidth <= 768 ? 0 : 70;
 
     const scrollTl = gsap.timeline({
       scrollTrigger: {

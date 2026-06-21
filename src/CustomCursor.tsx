@@ -1,13 +1,15 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 
 const CustomCursor = () => {
   const cursorDotRef = useRef<HTMLDivElement>(null);
   const cursorRingRef = useRef<HTMLDivElement>(null);
+  const [isTouch, setIsTouch] = useState(true);
 
   useEffect(() => {
     // Check if device is touch-based; if so, do not initialize custom cursor
     const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    setIsTouch(isTouchDevice);
     if (isTouchDevice) return;
 
     const dot = cursorDotRef.current;
@@ -103,6 +105,8 @@ const CustomCursor = () => {
       });
     };
   }, []);
+
+  if (isTouch) return null;
 
   return (
     <>

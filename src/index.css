@@ -1514,6 +1514,8 @@ html.lenis, html.lenis body {
   .portrait-card-wrapper {
     width: clamp(200px, 50vw, 250px);
     height: clamp(270px, 67vw, 340px);
+    margin-top: calc(-0.5 * clamp(270px, 67vw, 340px));
+    margin-left: calc(-0.5 * clamp(200px, 50vw, 250px));
   }
 }
 
@@ -1919,7 +1921,7 @@ body {
 /* Certifications Grid */
 .certifications-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
   width: 100%;
   box-sizing: border-box;
@@ -2074,5 +2076,58 @@ body {
   filter: brightness(1) drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
   color: #FFFFFF;
   transform: scale(1.1);
+}
+
+/* Responsive adjustments for floating bottom nav on mobile */
+@media (max-width: 640px) {
+  .floating-nav-container {
+    bottom: 1rem !important;
+  }
+  .floating-nav-capsule {
+    padding: 6px 6px 6px 12px !important;
+    gap: 6px !important;
+  }
+  .nav-links {
+    gap: 2px !important;
+  }
+  .nav-link-btn {
+    padding: 6px 12px !important;
+    font-size: 11px !important;
+  }
+  .nav-cta-btn {
+    padding: 7px 16px !important;
+    font-size: 11px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Hide Skills and Reviews on very small screens to fit layout */
+  .nav-link-item:nth-child(2), /* Skills */
+  .nav-link-item:nth-child(5)  /* Reviews */ {
+    display: none !important;
+  }
+  .floating-nav-container {
+    bottom: 0.75rem !important;
+  }
+  .floating-nav-capsule {
+    padding: 4px 4px 4px 10px !important;
+    gap: 4px !important;
+  }
+  .nav-link-btn {
+    padding: 5px 8px !important;
+    font-size: 10.5px !important;
+  }
+  .nav-cta-btn {
+    padding: 6px 12px !important;
+    font-size: 10.5px !important;
+  }
+  .project-card-luxury {
+    padding: 1.75rem !important;
+    border-radius: 24px !important;
+  }
+  .certification-card-luxury {
+    padding: 1.5rem !important;
+    border-radius: 20px !important;
+  }
 }
 
