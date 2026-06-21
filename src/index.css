@@ -868,67 +868,119 @@ html.lenis, html.lenis body {
   .services-cards-stack-track {
     align-items: center;
     justify-content: center;
-    padding-top: 2rem;
-    padding-bottom: calc(var(--bottom-nav-height) + 50px);
+    padding-top: 1.5rem;
+    padding-bottom: calc(var(--bottom-nav-height) + 30px);
   }
 
   .skills-sticky-grid {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1rem;
     align-items: center;
     justify-content: center;
+    height: 100%;
+    width: 100%;
+  }
+
+  .skills-sticky-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    max-width: 600px;
+  }
+
+  .skills-sticky-desc {
+    font-size: 0.95rem !important;
+    margin-top: 0.75rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .services-tabs-container {
+    margin-top: 1rem !important;
+    padding: 0.4rem 0.8rem !important;
   }
 
   .cards-deck-stack {
     width: 100%;
-    min-height: 480px;
-    margin-top: 0.5rem;
+    min-height: 380px; /* Reduced from 480px to fit mobile viewports */
+    margin-top: 0.25rem;
     perspective: 800px;
   }
 
   .skill-deck-card {
-    padding: 2rem 1.5rem !important;
-    min-height: 420px !important;
+    padding: 1.5rem !important;
+    min-height: 340px !important; /* Reduced from 420px */
   }
 
   .stack-card-content-title {
-    font-size: 1.8rem !important;
-    margin-bottom: 0.8rem !important;
+    font-size: 1.35rem !important;
+    margin-bottom: 0.5rem !important;
+    margin-top: 0.25rem !important;
   }
 
   .stack-card-content-desc {
-    font-size: 0.95rem !important;
-    margin-bottom: 1.2rem !important;
+    font-size: 0.9rem !important;
+    margin-bottom: 1rem !important;
+    line-height: 1.55 !important;
   }
 
-  .stack-card-bullets {
-    gap: 0.5rem 1rem !important;
+  .card-divider {
+    margin: 0.8rem 0 !important;
   }
 
-  .stack-card-bullet-item {
-    font-size: 0.85rem !important;
+  .stack-card-chips-title {
+    margin-bottom: 0.5rem !important;
+  }
+
+  .stack-card-chip {
+    font-size: 0.78rem !important;
+    padding: 4px 10px !important;
   }
 }
 
 @media (max-width: 480px) {
+  .services-cards-stack-track {
+    padding-top: 1rem;
+    padding-bottom: calc(var(--bottom-nav-height) + 15px);
+  }
+
+  .skills-sticky-desc {
+    display: none !important; /* Hide description on very small screens to fit card fully in viewport */
+  }
+
+  .services-tabs-container {
+    margin-top: 0.5rem !important;
+  }
+
   .cards-deck-stack {
-    min-height: 400px;
+    min-height: 320px; /* Reduced to ensure it fits SE and small screens */
   }
   
   .skill-deck-card {
-    padding: 1.5rem 1.2rem !important;
-    min-height: 360px !important;
+    padding: 1.25rem 1rem !important;
+    min-height: 295px !important; /* Reduced from 360px */
   }
 
   .stack-card-content-title {
-    font-size: 1.4rem !important;
-    margin-bottom: 0.5rem !important;
+    font-size: 1.15rem !important;
+    margin-bottom: 0.4rem !important;
   }
 
-  .stack-card-bullets {
-    grid-template-columns: 1fr !important;
-    gap: 0.4rem !important;
+  .stack-card-content-desc {
+    font-size: 0.82rem !important;
+    margin-bottom: 0.75rem !important;
+    line-height: 1.45 !important;
+  }
+
+  .card-divider {
+    margin: 0.6rem 0 !important;
+  }
+
+  .stack-card-chip {
+    font-size: 0.72rem !important;
+    padding: 3px 8px !important;
   }
 }
 
