@@ -2156,22 +2156,27 @@ body {
 /* Responsive adjustments for floating bottom nav on mobile */
 @media (max-width: 640px) {
   .floating-nav-container {
-    bottom: 1rem !important;
+    bottom: 1.25rem !important;
+    width: 90%;
+    display: flex;
+    justify-content: center;
   }
   .floating-nav-capsule {
-    padding: 6px 6px 6px 12px !important;
-    gap: 6px !important;
+    padding: 8px 8px 8px 16px !important; /* Expanded horizontal capsule padding */
+    gap: 12px !important; /* Increased horizontal gap between nav links and CTA button */
+    width: auto;
+    max-width: 100%;
   }
   .nav-links {
-    gap: 2px !important;
+    gap: 8px !important; /* Increased horizontal gap between individual links */
   }
   .nav-link-btn {
-    padding: 6px 12px !important;
-    font-size: 11px !important;
+    padding: 7px 15px !important; /* Increased horizontal padding on nav buttons */
+    font-size: 11.5px !important;
   }
   .nav-cta-btn {
-    padding: 7px 16px !important;
-    font-size: 11px !important;
+    padding: 8px 20px !important; /* Expanded CTA button width */
+    font-size: 11.5px !important;
   }
 }
 
@@ -2182,19 +2187,25 @@ body {
     display: none !important;
   }
   .floating-nav-container {
-    bottom: 0.75rem !important;
+    bottom: 1rem !important;
+    width: 92%;
+    display: flex;
+    justify-content: center;
   }
   .floating-nav-capsule {
-    padding: 4px 4px 4px 10px !important;
+    padding: 6px 6px 6px 12px !important; /* Adjusted padding */
+    gap: 8px !important; /* Adjusted horizontal gap */
+  }
+  .nav-links {
     gap: 4px !important;
   }
   .nav-link-btn {
-    padding: 5px 8px !important;
-    font-size: 10.5px !important;
+    padding: 6px 11px !important; /* Expanded horizontal link length */
+    font-size: 11px !important;
   }
   .nav-cta-btn {
-    padding: 6px 12px !important;
-    font-size: 10.5px !important;
+    padding: 7px 15px !important; /* Expanded horizontal CTA length */
+    font-size: 11px !important;
   }
   .project-card-luxury {
     padding: 1.75rem !important;
