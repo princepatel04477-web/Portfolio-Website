@@ -1586,6 +1586,12 @@ html.lenis, html.lenis body {
   .portrait-spacer {
     display: none;
   }
+
+  /* Hide Skills and Reviews on mobile screens to fit bottom nav capsule correctly */
+  .nav-link-item:nth-child(2), /* Skills */
+  .nav-link-item:nth-child(5)  /* Reviews */ {
+    display: none !important;
+  }
 }
 
 /* --- ScrollTrigger Reveal & Stagger Animation Setup --- */

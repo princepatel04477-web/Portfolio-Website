@@ -19,6 +19,10 @@ const MagneticButton = ({
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Detect touch device or mobile screen
+    const isMobileOrTouch = window.innerWidth <= 768 || ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+    if (isMobileOrTouch) return;
+
     const element = wrapperRef.current;
     if (!element) return;
 

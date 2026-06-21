@@ -666,24 +666,9 @@ function App() {
       };
     });
 
-    // Mobile only scroll animations (natural scrolling, simple fadeout)
+    // Mobile only scroll animations (natural scrolling, no early card fadeout)
     mm.add('(max-width: 768px)', () => {
-      const fadeCardMobile = ScrollTrigger.create({
-        trigger: '.hero-container',
-        start: 'top top',
-        end: 'bottom 50%',
-        scrub: true,
-        onUpdate: (self) => {
-          gsap.set('.portrait-card', {
-            opacity: 1 - self.progress,
-            visibility: self.progress === 1 ? 'hidden' : 'visible'
-          });
-        }
-      });
-
-      return () => {
-        fadeCardMobile.kill();
-      };
+      return () => {};
     });
 
     // ----------------------------------------------------
