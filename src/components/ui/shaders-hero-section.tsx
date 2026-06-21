@@ -12,8 +12,10 @@ interface ShaderBackgroundProps {
 export function ShaderBackground({ children }: ShaderBackgroundProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [hasWebGL, setHasWebGL] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
+    setIsMobile(window.innerWidth <= 768);
     try {
       const canvas = document.createElement('canvas');
       const supported = !!(
@@ -28,56 +30,21 @@ export function ShaderBackground({ children }: ShaderBackgroundProps) {
 
   return (
     <div ref={containerRef} className="min-h-screen w-full relative overflow-hidden">
-      {/* SVG Filters */}
-      <svg className="absolute inset-0 w-0 h-0">
-        <defs>
-          <filter id="glass-effect" x="-50%" y="-50%" width="200%" height="200%">
-            <feTurbulence baseFrequency="0.005" numOctaves="1" result="noise" />
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="0.3" />
-            <feColorMatrix
-              type="matrix"
-              values="1 0 0 0 0.02
-                      0 1 0 0 0.02
-                      0 0 1 0 0.05
-                      0 0 0 0.9 0"
-              result="tint"
-            />
-          </filter>
-          <filter id="gooey-filter" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur" />
-            <feColorMatrix
-              in="blur"
-              mode="matrix"
-              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9"
-              result="gooey"
-            />
-            <feComposite in="SourceGraphic" in2="gooey" operator="atop" />
-          </filter>
-        </defs>
-      </svg>
-
       {/* Background Shaders in Midnight Emerald Theme */}
       {hasWebGL ? (
-        <>
-          <MeshGradient
-            className="absolute inset-0 w-full h-full"
-            colors={["#050816", "#0b0f19", "#0F172A", "#10B981", "#3B82F6", "#042f2e"]}
-            speed={0.2}
-          />
-          <MeshGradient
-            className="absolute inset-0 w-full h-full opacity-35"
-            colors={["#050816", "#3B82F6", "#10B981", "#050816"]}
-            speed={0.15}
-          />
-        </>
-      ) : (
-        <div 
-          className="absolute inset-0 w-full h-full animate-pulse-slow" 
-          style={{
-            background: 'radial-gradient(circle at 50% 50%, #0c102b, #050816)',
-            animationDuration: '8s'
-          }}
+        <MeshGradient
+          className="absolute inset-0 w-full h-full"
+          colors={["#050816", "#0b0f19", "#0F172A", "#10B981", "#3B82F6", "#042f2e"]}
+          speed={0.12}
+          maxPixelCount={isMobile ? 120000 : 400000}
         />
+      ) : (
+        <div className="absolute inset-0 w-full h-full bg-[#050816] overflow-hidden">
+          {/* Hardware-Accelerated Dynamic Blurry Blobs for Mobile Fallback */}
+          <div className="mobile-blob blob-1" />
+          <div className="mobile-blob blob-2" />
+          <div className="mobile-blob blob-3" />
+        </div>
       )}
 
       {children}

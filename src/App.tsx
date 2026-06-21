@@ -445,6 +445,7 @@ function App() {
   const [copied, setCopied] = useState(false);
   const [activeServiceIndex, setActiveServiceIndex] = useState(0);
   const globalParticlesRef = useRef<HTMLCanvasElement>(null);
+  const currentAccentRef = useRef('16, 185, 129');
 
   // Global particle animation loop inheriting accent color
   useEffect(() => {
@@ -485,9 +486,8 @@ function App() {
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      const accent = getComputedStyle(document.documentElement)
-        .getPropertyValue('--ambient-accent-1')
-        .trim() || '16, 185, 129';
+      // OPTIMIZATION: Read from mutable ref instead of running heavy getComputedStyle on every single frame!
+      const accent = currentAccentRef.current;
 
       particles.forEach((p) => {
         p.y += p.speedY;
@@ -565,82 +565,10 @@ function App() {
       { y: 0, opacity: 1, duration: 1.2, ease: 'power3.out', delay: 1.2 }
     );
 
-    // ----------------------------------------------------
-    // ScrollTrigger 1: Pinned 3D card flips & translations
-    // ----------------------------------------------------
-    const xRight = () => window.innerWidth <= 768 ? 0 : Math.min(420, window.innerWidth * 0.25);
-    const yDown1 = () => window.innerWidth <= 768 ? 0 : 70;
-
-    const scrollTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: '.hero-container',
-        start: 'top top',
-        end: '+=5150',
-        scrub: 1.2,
-        pin: '.portrait-card-wrapper',
-        pinSpacing: false,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-      }
-    });
-
-    scrollTl
-      .to('.portrait-card', {
-        x: () => xRight(),
-        y: () => yDown1(),
-        rotationZ: 8,
-        rotationY: 0,
-        scale: 1,
-        ease: 'power1.inOut',
-        duration: 0.2
-      })
-      .to('.portrait-card', {
-        rotationY: 180,
-        rotationZ: 0,
-        ease: 'power2.inOut',
-        duration: 0.45
-      })
-      .to('.portrait-card', {
-        scale: 1.18,
-        ease: 'power1.inOut',
-        duration: 1.2
-      })
-      .to('.portrait-card', {
-        scale: 1,
-        ease: 'power1.inOut',
-        duration: 0.4
-      })
-      .to('.portrait-card', {
-        x: () => xRight(),
-        y: () => yDown1(),
-        rotationY: 180,
-        ease: 'none',
-        duration: 0.6
-      })
-      .to('.portrait-card', {
-        rotationY: 360,
-        ease: 'power2.inOut',
-        duration: 0.5
-      });
+    const mm = gsap.matchMedia();
 
     // ----------------------------------------------------
-    // ScrollTrigger 2: Card opacity fade out early
-    // ----------------------------------------------------
-    const fadeCardTrigger = ScrollTrigger.create({
-      trigger: '.hero-container',
-      start: 'top top',
-      end: '+=700', // fade out within first 700px of scrolling
-      scrub: true,
-      onUpdate: (self) => {
-        gsap.set('.portrait-card', {
-          opacity: 1 - self.progress,
-          visibility: self.progress === 1 ? 'hidden' : 'visible'
-        });
-      }
-    });
-
-    // ----------------------------------------------------
-    // ScrollTrigger 3: Typography & BG Video fade out
+    // ScrollTrigger 3: Typography & BG Video fade out (Both Desktop and Mobile)
     // ----------------------------------------------------
     const fadeTl = gsap.timeline({
       scrollTrigger: {
@@ -659,10 +587,12 @@ function App() {
       ease: 'none'
     }, 0);
 
+    // Fade the video background completely out of layout flow and stop WebGL rendering
     fadeTl.to('.hero-video-bg', {
       y: -100,
       scale: 0.95,
-      opacity: 0.08,
+      opacity: 0,
+      visibility: 'hidden',
       ease: 'none'
     }, 0);
 
@@ -675,6 +605,86 @@ function App() {
       xPercent: 30,
       ease: 'none'
     }, 0);
+
+    // Desktop only scroll animations
+    mm.add('(min-width: 769px)', () => {
+      // ----------------------------------------------------
+      // ScrollTrigger 1: Pinned 3D card flips & translations
+      // ----------------------------------------------------
+      const xRight = () => Math.min(420, window.innerWidth * 0.25);
+      const yDown1 = () => 70;
+
+      const scrollTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: '.hero-container',
+          start: 'top top',
+          end: '+=700', // matches the fadeout distance
+          scrub: 1.2,
+          pin: '.portrait-card-wrapper',
+          pinSpacing: false,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        }
+      });
+
+      scrollTl
+        .to('.portrait-card', {
+          x: () => xRight(),
+          y: () => yDown1(),
+          rotationZ: 8,
+          rotationY: 0,
+          scale: 1,
+          ease: 'power1.inOut',
+          duration: 0.4
+        })
+        .to('.portrait-card', {
+          rotationY: 180,
+          rotationZ: 0,
+          ease: 'power2.inOut',
+          duration: 0.6
+        });
+
+      // ----------------------------------------------------
+      // ScrollTrigger 2: Card opacity fade out early
+      // ----------------------------------------------------
+      const fadeCardTrigger = ScrollTrigger.create({
+        trigger: '.hero-container',
+        start: 'top top',
+        end: '+=700', // fade out within first 700px of scrolling
+        scrub: true,
+        onUpdate: (self) => {
+          gsap.set('.portrait-card', {
+            opacity: 1 - self.progress,
+            visibility: self.progress === 1 ? 'hidden' : 'visible'
+          });
+        }
+      });
+
+      return () => {
+        scrollTl.scrollTrigger?.kill();
+        fadeCardTrigger.kill();
+      };
+    });
+
+    // Mobile only scroll animations (natural scrolling, simple fadeout)
+    mm.add('(max-width: 768px)', () => {
+      const fadeCardMobile = ScrollTrigger.create({
+        trigger: '.hero-container',
+        start: 'top top',
+        end: 'bottom 50%',
+        scrub: true,
+        onUpdate: (self) => {
+          gsap.set('.portrait-card', {
+            opacity: 1 - self.progress,
+            visibility: self.progress === 1 ? 'hidden' : 'visible'
+          });
+        }
+      });
+
+      return () => {
+        fadeCardMobile.kill();
+      };
+    });
 
     // ----------------------------------------------------
     // ScrollTrigger 3: Stacking Cards Animation (Skills)
@@ -760,6 +770,9 @@ function App() {
         root.style.setProperty('--ambient-accent-1', accent1);
         root.style.setProperty('--ambient-accent-2', accent2);
         root.style.setProperty('--ambient-accent-3', accent3);
+
+        // Update the accent ref dynamically to prevent getComputedStyle in layout ticks
+        currentAccentRef.current = accent1;
       }
     });
 
@@ -813,8 +826,7 @@ function App() {
     return () => {
       lenisInstance.destroy();
       gsap.ticker.remove(updateTicker);
-      scrollTl.scrollTrigger?.kill();
-      fadeCardTrigger.kill();
+      mm.revert();
       fadeTl.scrollTrigger?.kill();
       cardsTl.scrollTrigger?.kill();
       bgColorsTrigger.kill();

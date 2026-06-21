@@ -44,28 +44,37 @@ const Hero = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // 2. Scroll pinning setup for background container
+  // 2. Scroll pinning setup for background container (Desktop only)
   useEffect(() => {
-    const pinTrigger = ScrollTrigger.create({
-      trigger: '.hero-container',
-      start: 'top top',
-      end: '+=5150',
-      pin: canvasContainerRef.current,
-      pinSpacing: false,
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
+    const mm = gsap.matchMedia();
+
+    mm.add('(min-width: 769px)', () => {
+      const pinTrigger = ScrollTrigger.create({
+        trigger: '.hero-container',
+        start: 'top top',
+        end: '+=5150',
+        pin: canvasContainerRef.current,
+        pinSpacing: false,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+      });
+
+      return () => {
+        pinTrigger.kill();
+      };
     });
 
-    return () => {
-      pinTrigger.kill();
-    };
+    return () => mm.revert();
   }, []);
 
   // 3. Entrance Sequence and Mouse Parallax (Local to Hero component)
   useEffect(() => {
     if (!imagesLoaded) return;
 
-    const ctx = gsap.context(() => {
+    const mm = gsap.matchMedia();
+
+    // Desktop Animations
+    mm.add('(min-width: 769px)', () => {
       const loadTl = gsap.timeline({
         defaults: { ease: 'power4.out' }
       });
@@ -183,9 +192,67 @@ const Hero = () => {
         window.removeEventListener('mousemove', handleMouseMove);
         cancelAnimationFrame(animId);
       };
-    }, containerRef);
+    });
 
-    return () => ctx.revert();
+    // Mobile Animations (Simplified to avoid lag and vertical layout shift)
+    mm.add('(max-width: 768px)', () => {
+      const loadTl = gsap.timeline({
+        defaults: { ease: 'power3.out' }
+      });
+
+      // Background reset
+      loadTl.to(containerRef.current, {
+        backgroundColor: '#050816',
+        duration: 0.3
+      });
+
+      // Ambient bg fade-in
+      loadTl.fromTo(canvasContainerRef.current,
+        { opacity: 0, scale: 1.02 },
+        { opacity: 1, scale: 1, duration: 1.2 },
+        '-=0.1'
+      );
+
+      // Portrait Card scale-in (positioned inline on mobile)
+      loadTl.fromTo(portraitCardRef.current,
+        { scale: 0.9, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 1.2 },
+        '-=1.0'
+      );
+
+      // Left Column slides up
+      loadTl.fromTo(leftColRef.current,
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1.2 },
+        '-=1.0'
+      );
+
+      // Right Column slides up
+      loadTl.fromTo(rightColRef.current,
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1.2 },
+        '-=1.0'
+      );
+
+      // Subtitles, Words & Location fade in
+      loadTl.fromTo('.hero-subtitle, .hero-word, .hero-location',
+        { y: 15, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8, stagger: 0.08, ease: 'power3.out' },
+        '-=0.8'
+      );
+
+      // Soft continuous floating animation for portrait card
+      gsap.to(portraitCardRef.current, {
+        y: '8px',
+        duration: 3,
+        ease: 'sine.inOut',
+        yoyo: true,
+        repeat: -1,
+        delay: 1.0
+      });
+    });
+
+    return () => mm.revert();
   }, [imagesLoaded]);
 
   const handleCardMouseEnter = () => {
