@@ -1,50 +1,24 @@
 import { useEffect, useState, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import princeImage from './assets/Prince.png';
 import { ShaderBackground } from './components/ui/shaders-hero-section';
+import LiveClock from './components/Hero/LiveClock';
+import PortraitCard from './components/Hero/PortraitCard';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Hero = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasContainerRef = useRef<HTMLDivElement>(null);
-  const portraitWrapperRef = useRef<HTMLDivElement>(null);
   const parallaxInnerRef = useRef<HTMLDivElement>(null);
   const portraitCardRef = useRef<HTMLDivElement>(null);
   const leftColRef = useRef<HTMLDivElement>(null);
   const rightColRef = useRef<HTMLDivElement>(null);
   const mouseGlowRef = useRef<HTMLDivElement>(null);
   
-  const [currentTime, setCurrentTime] = useState('');
   const [imagesLoaded] = useState(true);
 
-  // 1. Dynamic Live Clock for Surat, India (GMT+5:30)
-  useEffect(() => {
-    const updateTime = () => {
-      const options: Intl.DateTimeFormatOptions = {
-        timeZone: 'Asia/Kolkata',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-      };
-      try {
-        const timeString = new Date().toLocaleTimeString('en-US', options);
-        setCurrentTime(`${timeString} GMT+5:30`);
-      } catch (e) {
-        const now = new Date();
-        const hrs = String(now.getUTCHours() + 5).padStart(2, '0');
-        const mins = String(now.getUTCMinutes() + 30).padStart(2, '0');
-        setCurrentTime(`${hrs}:${mins} GMT+5:30`);
-      }
-    };
-    
-    updateTime();
-    const interval = setInterval(updateTime, 60000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // 2. Scroll pinning setup for background container (Desktop only)
+  // 1. Scroll pinning setup for background container (Desktop only)
   useEffect(() => {
     const mm = gsap.matchMedia();
 
@@ -67,7 +41,7 @@ const Hero = () => {
     return () => mm.revert();
   }, []);
 
-  // 3. Entrance Sequence and Mouse Parallax (Local to Hero component)
+  // 2. Entrance Sequence and Mouse Parallax (Local to Hero component)
   useEffect(() => {
     if (!imagesLoaded) return;
 
@@ -120,17 +94,7 @@ const Hero = () => {
         '-=0.8'
       );
 
-      // Soft continuous floating animation for portrait card
-      gsap.to(portraitCardRef.current, {
-        y: '10px',
-        duration: 4,
-        ease: 'sine.inOut',
-        yoyo: true,
-        repeat: -1,
-        delay: 1.2
-      });
-
-      // Mouse Parallax with Inertia (Tilt + Translation)
+      // Mouse Parallax with Inertia (Ambient Elements drift, Card tilt is handled by CSS)
       let mouseX = 0;
       let mouseY = 0;
       let targetX = 0;
@@ -147,15 +111,6 @@ const Hero = () => {
       const tick = () => {
         targetX += (mouseX - targetX) * 0.08;
         targetY += (mouseY - targetY) * 0.08;
-
-        if (parallaxInnerRef.current) {
-          gsap.set(parallaxInnerRef.current, {
-            rotationY: targetX * 14,
-            rotationX: -targetY * 14,
-            x: targetX * 20,
-            y: targetY * 20
-          });
-        }
 
         if (leftColRef.current && rightColRef.current) {
           gsap.set(leftColRef.current, {
@@ -240,16 +195,6 @@ const Hero = () => {
         { y: 0, opacity: 1, duration: 0.8, stagger: 0.08, ease: 'power3.out' },
         '-=0.8'
       );
-
-      // Soft continuous floating animation for portrait card
-      gsap.to(portraitCardRef.current, {
-        y: '8px',
-        duration: 3,
-        ease: 'sine.inOut',
-        yoyo: true,
-        repeat: -1,
-        delay: 1.0
-      });
     });
 
     return () => mm.revert();
@@ -274,7 +219,6 @@ const Hero = () => {
         </ShaderBackground>
       </div>
 
-
       {/* Split Typography Columns */}
       <div className="hero-content-wrapper">
         {/* Left Column: Subtitle + PRINCE */}
@@ -290,44 +234,16 @@ const Hero = () => {
         <div className="hero-column column-right" ref={rightColRef}>
           <span className="hero-subtitle">Founder • Varunya Technologies</span>
           <span className="hero-word">PATEL</span>
-          <span className="hero-location">Surat, India — {currentTime}</span>
+          <LiveClock />
         </div>
       </div>
 
       {/* Floating Portrait Card */}
-      <div className="portrait-card-wrapper" ref={portraitWrapperRef}>
-        <div className="parallax-inner" ref={parallaxInnerRef}>
-          {/* Orbiting Tech Rings */}
-          <div className="orbiting-ring" />
-          <div className="orbiting-ring-two" />
-          
-          <div 
-            className="portrait-card" 
-            ref={portraitCardRef}
-            onMouseEnter={handleCardMouseEnter}
-          >
-            {/* Card Front Face */}
-            <div className="scroll-card-face scroll-card-front">
-              <div className="portrait-glass-reflection" />
-              <div className="portrait-sheen-sweep" />
-              <div className="portrait-card-glow" />
-              <img 
-                src={princeImage} 
-                alt="Prince Patel Portrait" 
-                className="portrait-image"
-              />
-            </div>
-            
-            {/* Card Back Face */}
-            <div className="scroll-card-face scroll-card-back">
-              <div className="dark-card-overlay">
-                <span className="overlay-name">Prince Patel</span>
-                <span className="overlay-role">AI Engineer &amp; CTO</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PortraitCard 
+        cardRef={portraitCardRef} 
+        innerRef={parallaxInnerRef} 
+        onMouseEnterSheen={handleCardMouseEnter} 
+      />
     </section>
   );
 };

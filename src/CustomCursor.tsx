@@ -4,17 +4,29 @@ import gsap from 'gsap';
 const CustomCursor = () => {
   const cursorDotRef = useRef<HTMLDivElement>(null);
   const cursorRingRef = useRef<HTMLDivElement>(null);
-  const [isTouch, setIsTouch] = useState(true);
+  const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
-    // Check if device is touch-based; if so, do not initialize custom cursor
-    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    setIsTouch(isTouchDevice);
-    if (isTouchDevice) return;
+    // Only enable custom cursor if it's NOT a touch-only device (i.e. it has a fine pointer like a mouse/trackpad)
+    const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
+    const isTouchDevice = ('ontouchstart' in window || navigator.maxTouchPoints > 0) && !hasFinePointer;
+    
+    if (isTouchDevice) {
+      return;
+    }
+
+    setEnabled(true);
+  }, []);
+
+  useEffect(() => {
+    if (!enabled) return;
 
     const dot = cursorDotRef.current;
     const ring = cursorRingRef.current;
     if (!dot || !ring) return;
+
+    // Add active class to body so CSS hides the default cursor
+    document.body.classList.add('custom-cursor-active');
 
     let mouseX = 0;
     let mouseY = 0;
@@ -94,6 +106,7 @@ const CustomCursor = () => {
     const interval = setInterval(updateListeners, 1500);
 
     return () => {
+      document.body.classList.remove('custom-cursor-active');
       window.removeEventListener('mousemove', handleMouseMove);
       cancelAnimationFrame(animId);
       clearInterval(interval);
@@ -104,9 +117,9 @@ const CustomCursor = () => {
         link.removeEventListener('mouseleave', handleMouseLeaveLink);
       });
     };
-  }, []);
+  }, [enabled]);
 
-  if (isTouch) return null;
+  if (!enabled) return null;
 
   return (
     <>

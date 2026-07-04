@@ -89,10 +89,16 @@ html, body {
 
 /* Custom cursor hide on body */
 @media (min-width: 1025px) {
-  body {
+  body.custom-cursor-active {
     cursor: none;
   }
-  a, button, select, input, textarea, .portrait-card, .stack-card-luxury {
+  body.custom-cursor-active a, 
+  body.custom-cursor-active button, 
+  body.custom-cursor-active select, 
+  body.custom-cursor-active input, 
+  body.custom-cursor-active textarea, 
+  body.custom-cursor-active .portrait-card, 
+  body.custom-cursor-active .stack-card-luxury {
     cursor: none !important;
   }
 }
@@ -296,7 +302,7 @@ html.lenis, html.lenis body {
   pointer-events: none;
 }
 
-/* Portrait Card 3D Flip Layout */
+/* Portrait Card 3D Layout & Structural Hierarchy */
 .portrait-card-wrapper {
   position: absolute;
   top: 50%;
@@ -316,22 +322,74 @@ html.lenis, html.lenis body {
   transform-style: preserve-3d;
 }
 
+/* Layer 1: GPU-Friendly Slow Continuous Float */
+.float-wrapper {
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  will-change: transform;
+  /* Slow, majestic 12-second cycle */
+  animation: premiumContinuousFloat 12s ease-in-out infinite;
+}
+
+/* Layer 2: 3D Interactive Tilt & Lift */
+.tilt-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  
+  /* Apply values calculated by React JS */
+  transform: perspective(1000px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) scale(var(--tilt-scale, 1));
+  border-radius: 32px;
+  
+  /* Smooth return transition on mouse leave */
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+/* Override exit transition to prevent tracking lag when active */
+.tilt-wrapper.is-hovering {
+  transition: transform 0.1s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Layer 3: Glassmorphism Card Base & Ambient Glow */
 .portrait-card {
   position: relative;
   width: 100%;
   height: 100%;
   border-radius: 32px;
-  background-color: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(25px) saturate(140%);
-  -webkit-backdrop-filter: blur(25px) saturate(140%);
+  background: linear-gradient(145deg, rgba(10, 10, 15, 0.65) 0%, rgba(5, 5, 8, 0.4) 100%);
+  backdrop-filter: blur(25px) saturate(120%);
+  -webkit-backdrop-filter: blur(25px) saturate(120%);
+  
+  /* Soft shadow & subtle teal ambient glow */
   box-shadow: 
-    0 30px 60px rgba(0, 0, 0, 0.5),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+    0 30px 60px rgba(0, 0, 0, 0.6),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08), /* Ultra-thin translucent internal border */
+    0 0 30px rgba(45, 212, 191, 0.12); /* Subtle teal glow */
+  
   transform-style: preserve-3d;
   will-change: transform, box-shadow;
   opacity: 0;
+  
+  /* Transition for hover state changes */
+  transition: 
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.tilt-wrapper.is-hovering .portrait-card {
+  border-color: rgba(45, 212, 191, 0.3);
+  box-shadow: 
+    0 40px 80px rgba(0, 0, 0, 0.7),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.15),
+    0 0 45px rgba(45, 212, 191, 0.3); /* Intensified teal glow on hover */
+}
+
+/* Card Faces */
 .scroll-card-face {
   position: absolute;
   top: 0;
@@ -348,80 +406,72 @@ html.lenis, html.lenis body {
 }
 
 .scroll-card-front {
-  background-color: rgba(255, 255, 255, 0.02);
   transform: rotateY(0deg);
   z-index: 2;
   border-radius: 32px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-/* Orbiting Tech Rings */
-.orbiting-ring {
-  position: absolute;
-  top: -15%;
-  left: -15%;
-  width: 130%;
-  height: 130%;
-  border-radius: 50%;
-  border: 1px solid rgba(59, 130, 246, 0.25);
+  overflow: hidden;
+  position: relative;
+  
+  /* Dual-inset rim glow simulating the teal/emerald ambient light bleed */
   box-shadow: 
-    0 0 10px rgba(59, 130, 246, 0.1), 
-    inset 0 0 10px rgba(59, 130, 246, 0.1);
-  pointer-events: none;
-  animation: orbitZ 12s linear infinite;
-  z-index: 999;
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    inset 0 0 25px 2px rgba(16, 185, 129, 0.2),
+    0 30px 60px rgba(0, 0, 0, 0.5);
 }
 
-.orbiting-ring-two {
+/* Vignette / Multiply Overlay (Fading borders to background dark color) */
+.scroll-card-front::after {
+  content: '';
   position: absolute;
-  top: -10%;
-  left: -10%;
-  width: 120%;
-  height: 120%;
-  border-radius: 50%;
-  border: 1px solid rgba(16, 185, 129, 0.25);
-  box-shadow: 
-    0 0 10px rgba(16, 185, 129, 0.1), 
-    inset 0 0 10px rgba(16, 185, 129, 0.1);
+  inset: 0;
+  border-radius: 31px;
   pointer-events: none;
-  animation: orbitY 8s linear infinite;
-  z-index: 999;
+  z-index: 3; /* Placed above the color grade */
+  
+  /* Multiply layer: white is transparent, dark colors burn/multiply shadows */
+  background: radial-gradient(
+    circle at 50% 35%, 
+    #ffffff 0%, 
+    rgba(255, 255, 255, 0.95) 45%, 
+    rgba(10, 20, 25, 0.4) 75%,
+    #050816 95%                       /* Fades corners to match site's bg-color */
+  );
+  
+  mix-blend-mode: multiply;
+  opacity: 0.9;                       /* Controlled density vignette */
 }
 
-@keyframes orbitZ {
-  0% {
-    transform: rotateX(65deg) rotateY(-20deg) rotateZ(0deg);
-  }
-  100% {
-    transform: rotateX(65deg) rotateY(-20deg) rotateZ(360deg);
-  }
-}
-
-@keyframes orbitY {
-  0% {
-    transform: rotateX(45deg) rotateY(40deg) rotateZ(360deg);
-  }
-  100% {
-    transform: rotateX(45deg) rotateY(40deg) rotateZ(0deg);
-  }
+/* Color Grading Overlay (Teal Ambient Bleed + Warm Face Pocket) */
+.scroll-card-front::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 31px;
+  pointer-events: none;
+  z-index: 2; /* Sits directly above the image, below reflection elements */
+  
+  /* Centered at 50% 35% where the face is positioned */
+  background: radial-gradient(
+    circle at 50% 35%, 
+    rgba(255, 235, 225, 0.0) 0%,      /* Transparent warm center preserves skin tones */
+    rgba(16, 185, 129, 0.06) 45%,     /* Soft transition to teal/emerald */
+    rgba(13, 148, 136, 0.2) 80%,      /* Stronger teal grading on clothing/background */
+    rgba(6, 78, 59, 0.4) 100%         /* Deep emerald shadow on borders */
+  );
+  
+  mix-blend-mode: soft-light;
 }
 
 .scroll-card-back {
-  background-color: #1A1A18;
+  background-color: #0d0d12;
   background-image: 
-    radial-gradient(circle at 50% 50%, rgba(227, 112, 0, 0.12), transparent 75%),
+    radial-gradient(circle at 50% 50%, rgba(45, 212, 191, 0.1), transparent 75%),
     linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
   background-size: 100% 100%, 24px 24px, 24px 24px;
   transform: rotateY(180deg);
   z-index: 1;
   border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.scroll-card-back video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 .dark-card-overlay {
@@ -455,6 +505,7 @@ html.lenis, html.lenis body {
   letter-spacing: 0.05em;
 }
 
+/* Portrait Image & Treatments */
 .portrait-image {
   width: 100%;
   height: 100%;
@@ -464,13 +515,97 @@ html.lenis, html.lenis body {
   transition: scale 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   outline: 1px solid rgba(0, 0, 0, 0.06);
   outline-offset: -1px;
+  z-index: 1;
+  
+  /* Art Director's Filter Chain */
+  filter: contrast(1.08) brightness(1.02) saturate(1.03) sepia(0.02);
 }
 
-.portrait-card:hover .portrait-image {
-  scale: 1.1;
+.tilt-wrapper.is-hovering .portrait-image {
+  scale: 1.08;
 }
 
-/* Sheen & glass effects */
+/* Overlays formatting */
+.portrait-card-overlay-top {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 10;
+  background: rgba(15, 15, 15, 0.65);
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 100px;
+  padding: 6px 12px;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  background-color: #2dd4bf;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #2dd4bf;
+  animation: pulse-glow 2s infinite ease-in-out;
+}
+
+.status-text {
+  font-family: var(--font-body);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 600;
+}
+
+.portrait-card-overlay-bottom {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  right: 24px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+}
+
+/* Gradient protection scrim for overlays readability */
+.portrait-card-overlay-bottom::before {
+  content: '';
+  position: absolute;
+  bottom: -24px;
+  left: -24px;
+  right: -24px;
+  height: 120px;
+  pointer-events: none;
+  z-index: -1;
+  background: linear-gradient(to top, rgba(10, 10, 10, 0.85) 0%, rgba(10, 10, 10, 0.3) 40%, transparent 100%);
+  border-radius: 0 0 32px 32px;
+}
+
+.card-overlay-name {
+  font-family: var(--font-display-hero);
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+.card-overlay-role {
+  font-family: var(--font-body);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.75);
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Glass & Sheen sweep reflections */
 .portrait-glass-reflection {
   position: absolute;
   top: 0;
@@ -487,12 +622,12 @@ html.lenis, html.lenis body {
     rgba(255, 255, 255, 0) 100%
   );
   mix-blend-mode: overlay;
-  z-index: 2;
+  z-index: 4;
   transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.portrait-card:hover .portrait-glass-reflection {
-  transform: translate(15%, 15%) scale(1.1);
+.tilt-wrapper.is-hovering .portrait-glass-reflection {
+  transform: translate(10%, 10%) scale(1.05);
 }
 
 .portrait-sheen-sweep {
@@ -509,7 +644,7 @@ html.lenis, html.lenis body {
   );
   transform: skewX(-25deg);
   pointer-events: none;
-  z-index: 3;
+  z-index: 5;
 }
 
 .portrait-card-glow {
@@ -527,6 +662,147 @@ html.lenis, html.lenis body {
   pointer-events: none;
   z-index: 4;
 }
+
+/* Cursor-relative Dynamic Radial Glow */
+.portrait-glow-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 6;
+  border-radius: 32px;
+  background: radial-gradient(
+    circle 220px at var(--glow-x, 50%) var(--glow-y, 50%),
+    rgba(16, 185, 129, 0.15),
+    transparent 80%
+  );
+  opacity: var(--glow-opacity, 0);
+  transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  mix-blend-mode: screen;
+}
+
+/* Orbiting Rings & 3D Layer Positioning */
+.orbiting-ring {
+  position: absolute;
+  top: -15%;
+  left: -15%;
+  width: 130%;
+  height: 130%;
+  border-radius: 50%;
+  border: 1px solid rgba(59, 130, 246, 0.08); /* Deep blue theme ring */
+  pointer-events: none;
+  transform-style: preserve-3d;
+  
+  /* Positions the ring physically behind the card in 3D space */
+  transform: translateZ(-60px);
+  /* Planetary slow rotation */
+  animation: orbitZ 36s linear infinite;
+  z-index: 1;
+}
+
+.orbiting-ring-two {
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  width: 120%;
+  height: 120%;
+  border-radius: 50%;
+  border: 1px solid rgba(45, 212, 191, 0.16); /* Teal/Emerald theme ring */
+  pointer-events: none;
+  transform-style: preserve-3d;
+  
+  /* Positions the ring physically in front of the card in 3D space */
+  transform: translateZ(60px);
+  /* Planetary slow rotation (2:3 harmonic ratio to avoid repetition) */
+  animation: orbitY 24s linear infinite;
+  z-index: 1001;
+}
+
+/* Keyframes for animations */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.6; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+@keyframes premiumContinuousFloat {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotateZ(0deg) rotateX(0deg) rotateY(0deg);
+  }
+  25% {
+    transform: translate3d(1px, -4px, 3px) rotateZ(0.2deg) rotateX(0.3deg) rotateY(-0.2deg);
+  }
+  50% {
+    transform: translate3d(0, -8px, 0) rotateZ(-0.4deg) rotateX(-0.5deg) rotateY(0.3deg);
+  }
+  75% {
+    transform: translate3d(-1px, -4px, 3px) rotateZ(0.2deg) rotateX(0.3deg) rotateY(-0.3deg);
+  }
+}
+
+@keyframes orbitZ {
+  0% {
+    transform: translateZ(-60px) rotateX(65deg) rotateY(-20deg) rotateZ(0deg);
+  }
+  100% {
+    transform: translateZ(-60px) rotateX(65deg) rotateY(-20deg) rotateZ(360deg);
+  }
+}
+
+@keyframes orbitY {
+  0% {
+    transform: translateZ(60px) rotateX(45deg) rotateY(40deg) rotateZ(360deg);
+  }
+  100% {
+    transform: translateZ(60px) rotateX(45deg) rotateY(40deg) rotateZ(0deg);
+  }
+}
+
+/* Accessibility Media Query Overrides (prefers-reduced-motion) */
+@media (prefers-reduced-motion: reduce) {
+  .float-wrapper {
+    animation: none !important;
+    transform: none !important;
+  }
+  
+  .tilt-wrapper {
+    transform: none !important;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4) !important;
+    transition: none !important;
+  }
+  
+  .tilt-wrapper.is-hovering {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4) !important;
+  }
+  
+  .portrait-card {
+    animation: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  
+  .orbiting-ring {
+    animation: none !important;
+    transform: translateZ(-60px) rotateX(65deg) rotateY(-20deg) rotateZ(0deg) !important;
+    opacity: 0.15 !important;
+  }
+  
+  .orbiting-ring-two {
+    animation: none !important;
+    transform: translateZ(60px) rotateX(45deg) rotateY(40deg) rotateZ(360deg) !important;
+    opacity: 0.15 !important;
+  }
+
+  .portrait-image,
+  .portrait-glass-reflection,
+  .portrait-glow-overlay {
+    transition: none !important;
+    transform: none !important;
+    scale: 1 !important;
+  }
+}
+
 
 /* --- Floating Bottom Navigation Capsule --- */
 .floating-nav-container {
