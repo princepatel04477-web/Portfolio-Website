@@ -14,12 +14,14 @@ export const PortraitCard: React.FC<PortraitCardProps> = ({
 }) => {
   const tiltWrapperRef = useRef<HTMLDivElement>(null);
 
+  const rectRef = useRef<DOMRect | null>(null);
+
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (window.innerWidth <= 768) return;
+    if (window.innerWidth <= 1024) return;
     const card = tiltWrapperRef.current;
     if (!card) return;
 
-    const rect = card.getBoundingClientRect();
+    const rect = rectRef.current || card.getBoundingClientRect();
     const x = e.clientX - rect.left; // cursor X inside card
     const y = e.clientY - rect.top;  // cursor Y inside card
 
@@ -42,9 +44,10 @@ export const PortraitCard: React.FC<PortraitCardProps> = ({
   };
 
   const handleMouseEnter = () => {
-    if (window.innerWidth <= 768) return;
+    if (window.innerWidth <= 1024) return;
     const card = tiltWrapperRef.current;
     if (card) {
+      rectRef.current = card.getBoundingClientRect(); // Cache bounding box on enter
       card.classList.add('is-hovering');
       card.style.setProperty('--tilt-scale', '1.02');
       card.style.setProperty('--glow-opacity', '1');
@@ -57,6 +60,7 @@ export const PortraitCard: React.FC<PortraitCardProps> = ({
   const handleMouseLeave = () => {
     const card = tiltWrapperRef.current;
     if (card) {
+      rectRef.current = null; // Clear cache on exit
       card.classList.remove('is-hovering');
       // Reset properties back to neutral (CSS transition will interpolate)
       card.style.setProperty('--tilt-x', '0deg');

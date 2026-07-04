@@ -151,6 +151,21 @@ html.lenis, html.lenis body {
   display: flex;
   justify-content: center;
   align-items: center;
+
+  /* Dynamic collision prevention metrics */
+  --bottom-nav-offset: 2rem; /* Matches bottom of navbar capsule */
+  --nav-clearance: 3rem;     /* Comfort zone clearance above navbar */
+  --safe-bottom-area: calc(var(--bottom-nav-height, 60px) + var(--bottom-nav-offset) + var(--nav-clearance));
+
+  /* Math for vertical centering constraints: height <= 100vh - 2 * safe_bottom */
+  --card-height-constrained: clamp(
+    240px,
+    min(31vw, calc(100vh - 2 * var(--safe-bottom-area))),
+    460px
+  );
+  
+  /* Maintain the 0.74 design aspect ratio */
+  --card-width-constrained: calc(var(--card-height-constrained) * 0.74);
 }
 
 /* Video Hexagon Background / Shader Container */
@@ -296,10 +311,11 @@ html.lenis, html.lenis body {
 }
 
 .portrait-spacer {
-  width: clamp(230px, 23vw, 340px);
-  height: clamp(310px, 31vw, 460px);
+  width: var(--card-width-constrained);
+  height: var(--card-height-constrained);
   flex-shrink: 0;
   pointer-events: none;
+  transition: width 0.3s ease, height 0.3s ease;
 }
 
 /* Portrait Card 3D Layout & Structural Hierarchy */
@@ -307,12 +323,13 @@ html.lenis, html.lenis body {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: clamp(230px, 23vw, 340px);
-  height: clamp(310px, 31vw, 460px);
-  margin-top: calc(-0.5 * clamp(310px, 31vw, 460px));
-  margin-left: calc(-0.5 * clamp(230px, 23vw, 340px));
+  width: var(--card-width-constrained);
+  height: var(--card-height-constrained);
+  margin-top: calc(-0.5 * var(--card-height-constrained));
+  margin-left: calc(-0.5 * var(--card-width-constrained));
   z-index: 1000; /* stays on top of content sections */
   perspective: 1400px;
+  transition: width 0.3s ease, height 0.3s ease, margin 0.3s ease;
 }
 
 .parallax-inner {
@@ -728,16 +745,16 @@ html.lenis, html.lenis body {
 
 @keyframes premiumContinuousFloat {
   0%, 100% {
-    transform: translate3d(0, 0, 0) rotateZ(0deg) rotateX(0deg) rotateY(0deg);
+    transform: translate3d(0, -4px, 0) rotateZ(-0.4deg) rotateX(-0.3deg) rotateY(-0.2deg);
   }
   25% {
-    transform: translate3d(1px, -4px, 3px) rotateZ(0.2deg) rotateX(0.3deg) rotateY(-0.2deg);
+    transform: translate3d(1px, 0, 1px) rotateZ(-0.2deg) rotateX(-0.15deg) rotateY(0deg);
   }
   50% {
-    transform: translate3d(0, -8px, 0) rotateZ(-0.4deg) rotateX(-0.5deg) rotateY(0.3deg);
+    transform: translate3d(0, 4px, 0) rotateZ(0.4deg) rotateX(0.3deg) rotateY(0.2deg);
   }
   75% {
-    transform: translate3d(-1px, -4px, 3px) rotateZ(0.2deg) rotateX(0.3deg) rotateY(-0.3deg);
+    transform: translate3d(-1px, 0, -1px) rotateZ(0.2deg) rotateX(0.15deg) rotateY(0deg);
   }
 }
 
@@ -810,12 +827,13 @@ html.lenis, html.lenis body {
   bottom: 2rem;
   left: 50%;
   transform: translateX(-50%) translateY(100px);
-  z-index: 100;
+  z-index: 2000; /* Stays above 3D portrait card (1000) and orbiting rings (1001) */
   opacity: 0;
-  pointer-events: auto;
+  pointer-events: none; /* Let clicks pass through empty container space */
 }
 
 .floating-nav-capsule {
+  pointer-events: auto; /* Only capture clicks on the active navigation capsule */
   background: rgba(10, 10, 10, 0.45);
   backdrop-filter: blur(30px) saturate(120%);
   -webkit-backdrop-filter: blur(30px) saturate(120%);
@@ -838,6 +856,14 @@ html.lenis, html.lenis body {
     0 25px 50px rgba(0, 0, 0, 0.6),
     0 1px 0 rgba(255, 255, 255, 0.15) inset,
     0 0 25px rgba(227, 112, 0, 0.4);
+}
+
+/* Focus visible states for keyboard accessibility */
+.nav-home-btn:focus-visible,
+.nav-link-btn:focus-visible,
+.nav-cta-btn:focus-visible {
+  outline: 2px solid var(--accent-color) !important;
+  outline-offset: 3px !important;
 }
 
 .nav-links {
@@ -1853,7 +1879,7 @@ html.lenis, html.lenis body {
 }
 
 /* --- Responsive Override --- */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .hero-container {
     height: auto;
     min-height: 100vh;
@@ -1861,7 +1887,7 @@ html.lenis, html.lenis body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 7rem 1.5rem 5rem;
+    padding: 7rem 1.5rem calc(var(--bottom-nav-height, 60px) + 3rem) !important;
     box-sizing: border-box;
   }
 
@@ -1884,14 +1910,15 @@ html.lenis, html.lenis body {
     position: relative !important;
     top: auto !important;
     left: auto !important;
-    width: clamp(210px, 55vw, 250px) !important;
-    height: clamp(280px, 72vw, 330px) !important;
-    margin: 2rem auto !important;
+    width: clamp(210px, 50vw, 250px) !important;
+    height: clamp(280px, 67vw, 335px) !important;
+    margin: 2.5rem auto !important;
     transform: none !important;
   }
 
   .hero-column.column-right {
     order: 3;
+    margin-top: -0.5rem;
   }
 
   .hero-subtitle {
@@ -1914,7 +1941,9 @@ html.lenis, html.lenis body {
   .portrait-spacer {
     display: none;
   }
+}
 
+@media (max-width: 768px) {
   /* Hide Skills and Reviews on mobile screens to fit bottom nav capsule correctly */
   .nav-link-item:nth-child(2), /* Skills */
   .nav-link-item:nth-child(5)  /* Reviews */ {
@@ -2542,6 +2571,218 @@ body {
   .certification-card-luxury {
     padding: 1.5rem !important;
     border-radius: 20px !important;
+  }
+}
+
+/* Short viewport adaptations to prevent card-navigation overlap and text clipping */
+@media (min-width: 1025px) and (max-height: 780px) {
+  .hero-container {
+    --nav-clearance: 2.2rem;
+  }
+  
+  .tilt-wrapper, .portrait-card, .scroll-card-face, .scroll-card-front {
+    border-radius: 20px !important;
+  }
+  .scroll-card-front::after, .scroll-card-front::before {
+    border-radius: 19px !important;
+  }
+  .portrait-card-overlay-top {
+    top: 16px !important;
+    left: 16px !important;
+    padding: 4px 8px !important;
+  }
+  .status-text {
+    font-size: 8px !important;
+  }
+  .portrait-card-overlay-bottom {
+    bottom: 16px !important;
+    left: 16px !important;
+    right: 16px !important;
+    gap: 2px !important;
+  }
+  .card-overlay-name {
+    font-size: 15px !important;
+  }
+  .card-overlay-role {
+    font-size: 9px !important;
+  }
+  .portrait-card-overlay-bottom::before {
+    bottom: -16px !important;
+    left: -16px !important;
+    right: -16px !important;
+    height: 90px !important;
+    border-radius: 0 0 20px 20px !important;
+  }
+  .dark-card-overlay {
+    padding: 1.5rem 1rem !important;
+  }
+  .overlay-name {
+    font-size: 1.4rem !important;
+  }
+  .overlay-role {
+    font-size: 0.75rem !important;
+  }
+  .orbiting-ring {
+    animation: orbitZ-short-780 36s linear infinite !important;
+  }
+  .orbiting-ring-two {
+    animation: orbitY-short-780 24s linear infinite !important;
+  }
+}
+
+@media (min-width: 1025px) and (max-height: 640px) {
+  .hero-container {
+    --nav-clearance: 1.5rem;
+  }
+
+  .tilt-wrapper, .portrait-card, .scroll-card-face, .scroll-card-front {
+    border-radius: 14px !important;
+  }
+  .scroll-card-front::after, .scroll-card-front::before {
+    border-radius: 13px !important;
+  }
+  .portrait-card-overlay-top {
+    top: 12px !important;
+    left: 12px !important;
+    padding: 3px 6px !important;
+  }
+  .status-dot {
+    width: 4px !important;
+    height: 4px !important;
+  }
+  .status-text {
+    font-size: 7px !important;
+    letter-spacing: 0.1em !important;
+  }
+  .portrait-card-overlay-bottom {
+    bottom: 12px !important;
+    left: 12px !important;
+    right: 12px !important;
+    gap: 0 !important;
+  }
+  .card-overlay-name {
+    font-size: 13px !important;
+  }
+  .card-overlay-role {
+    font-size: 8px !important;
+  }
+  .portrait-card-overlay-bottom::before {
+    bottom: -12px !important;
+    left: -12px !important;
+    right: -12px !important;
+    height: 70px !important;
+    border-radius: 0 0 14px 14px !important;
+  }
+  .dark-card-overlay {
+    padding: 1rem 0.75rem !important;
+  }
+  .overlay-name {
+    font-size: 1.1rem !important;
+  }
+  .overlay-role {
+    font-size: 0.65rem !important;
+  }
+  .orbiting-ring {
+    animation: orbitZ-short-640 36s linear infinite !important;
+  }
+  .orbiting-ring-two {
+    animation: orbitY-short-640 24s linear infinite !important;
+  }
+}
+
+/* Force stacked layout on extremely short screen heights to guarantee layout safety */
+@media (min-width: 1025px) and (max-height: 560px) {
+  .hero-container {
+    height: auto !important;
+    min-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 6rem 1.5rem calc(var(--bottom-nav-height, 60px) + 3rem) !important;
+    box-sizing: border-box !important;
+  }
+  .hero-content-wrapper {
+    display: contents !important;
+  }
+  .hero-column {
+    align-items: center !important;
+    text-align: center !important;
+    width: 100% !important;
+  }
+  .hero-column.column-left {
+    order: 1 !important;
+  }
+  .portrait-card-wrapper {
+    order: 2 !important;
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    margin: 2rem auto !important;
+    width: clamp(150px, 15vw, 200px) !important;
+    height: clamp(200px, 20vw, 270px) !important;
+    transform: none !important;
+  }
+  .hero-column.column-right {
+    order: 3 !important;
+  }
+  .portrait-spacer {
+    display: none !important;
+  }
+}
+
+/* Hides card to avoid overlap on landscape phones with very small screen heights */
+@media (max-height: 500px) and (orientation: landscape) {
+  .portrait-card-wrapper {
+    display: none !important;
+  }
+  .hero-container {
+    height: auto !important;
+    min-height: 100vh !important;
+    padding: 4rem 1.5rem calc(var(--bottom-nav-height, 60px) + 2rem) !important;
+  }
+}
+
+/* Reduced-scale keyframes for orbiting rings on short viewports */
+@keyframes orbitZ-short-780 {
+  0% {
+    transform: translateZ(-40px) rotateX(65deg) rotateY(-20deg) rotateZ(0deg);
+  }
+  100% {
+    transform: translateZ(-40px) rotateX(65deg) rotateY(-20deg) rotateZ(360deg);
+  }
+}
+@keyframes orbitY-short-780 {
+  0% {
+    transform: translateZ(40px) rotateX(45deg) rotateY(40deg) rotateZ(360deg);
+  }
+  100% {
+    transform: translateZ(40px) rotateX(45deg) rotateY(40deg) rotateZ(0deg);
+  }
+}
+
+@keyframes orbitZ-short-640 {
+  0% {
+    transform: translateZ(-25px) rotateX(65deg) rotateY(-20deg) rotateZ(0deg);
+  }
+  100% {
+    transform: translateZ(-25px) rotateX(65deg) rotateY(-20deg) rotateZ(360deg);
+  }
+}
+@keyframes orbitY-short-640 {
+  0% {
+    transform: translateZ(25px) rotateX(45deg) rotateY(40deg) rotateZ(360deg);
+  }
+  100% {
+    transform: translateZ(25px) rotateX(45deg) rotateY(40deg) rotateZ(0deg);
+  }
+}
+
+/* Prefers-reduced-motion failsafe for short viewport orbit animations */
+@media (prefers-reduced-motion: reduce) {
+  .orbiting-ring,
+  .orbiting-ring-two {
+    animation: none !important;
   }
 }
 

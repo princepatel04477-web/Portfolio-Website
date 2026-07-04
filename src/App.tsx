@@ -531,26 +531,31 @@ function App() {
 
     setLenis(lenisInstance);
 
-    // Active Tab Boundaries Tracker
-    const handleScroll = () => {
-      ScrollTrigger.update();
-      
-      const sections = ['home', 'skills', 'about', 'portfolio', 'reviews', 'contact'];
-      const viewportMid = window.innerHeight * 0.3;
-      
-      for (const sectionId of sections) {
-        const el = document.getElementById(sectionId);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          if (rect.top <= viewportMid && rect.bottom >= viewportMid) {
-            setActiveSection(sectionId);
-            break;
-          }
-        }
-      }
+    // Active Tab Boundaries Tracker (Optimized with IntersectionObserver to prevent layout thrashing)
+    const sections = ['home', 'skills', 'about', 'portfolio', 'reviews', 'contact'];
+    const observerOptions = {
+      root: null,
+      rootMargin: '-30% 0px -60% 0px',
+      threshold: 0
     };
 
-    lenisInstance.on('scroll', handleScroll);
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    lenisInstance.on('scroll', () => {
+      ScrollTrigger.update();
+    });
 
     // GSAP Ticker Connection
     const updateTicker = (time: number) => {
@@ -811,6 +816,7 @@ function App() {
     return () => {
       lenisInstance.destroy();
       gsap.ticker.remove(updateTicker);
+      observer.disconnect();
       mm.revert();
       fadeTl.scrollTrigger?.kill();
       cardsTl.scrollTrigger?.kill();
@@ -831,6 +837,9 @@ function App() {
       for (const entry of entries) {
         const height = entry.borderBoxSize?.[0]?.blockSize ?? entry.contentRect.height;
         document.documentElement.style.setProperty('--bottom-nav-height', `${height}px`);
+        
+        // Force GSAP ScrollTrigger to recalculate active pinning boundaries
+        ScrollTrigger.refresh();
       }
     });
 

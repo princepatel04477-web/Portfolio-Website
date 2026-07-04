@@ -57,65 +57,63 @@ const CustomCursor = () => {
 
     animId = requestAnimationFrame(tick);
 
-    // Hover triggers for links/buttons
-    const handleMouseEnterLink = () => {
-      gsap.to(ring, {
-        scale: 1.6,
-        backgroundColor: 'rgba(227, 112, 0, 0.06)',
-        borderColor: 'rgba(227, 112, 0, 0.35)',
-        duration: 0.3,
-        overwrite: 'auto'
-      });
-      gsap.to(dot, {
-        scale: 0.5,
-        backgroundColor: '#e37000',
-        duration: 0.3,
-        overwrite: 'auto'
-      });
+    // Event delegation on document.body for dynamic hover detection (no polling loops or leaks)
+    let activeHoveredElement: Element | null = null;
+
+    const handlePointerOver = (e: PointerEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+
+      const interactive = target.closest('a, button, .portrait-card, .stack-card-luxury, .portfolio-card-luxury, .testimonial-card-luxury, .nav-home-btn');
+      if (interactive && interactive !== activeHoveredElement) {
+        activeHoveredElement = interactive;
+        gsap.to(ring, {
+          scale: 1.6,
+          backgroundColor: 'rgba(227, 112, 0, 0.06)',
+          borderColor: 'rgba(227, 112, 0, 0.35)',
+          duration: 0.3,
+          overwrite: 'auto'
+        });
+        gsap.to(dot, {
+          scale: 0.5,
+          backgroundColor: '#e37000',
+          duration: 0.3,
+          overwrite: 'auto'
+        });
+      }
     };
 
-    const handleMouseLeaveLink = () => {
-      gsap.to(ring, {
-        scale: 1,
-        backgroundColor: 'transparent',
-        borderColor: 'rgba(28, 28, 26, 0.2)',
-        duration: 0.3,
-        overwrite: 'auto'
-      });
-      gsap.to(dot, {
-        scale: 1,
-        backgroundColor: '#e37000',
-        duration: 0.3,
-        overwrite: 'auto'
-      });
+    const handlePointerOut = (e: PointerEvent) => {
+      const relatedTarget = e.relatedTarget as HTMLElement | null;
+      const currentInteractive = relatedTarget ? relatedTarget.closest('a, button, .portrait-card, .stack-card-luxury, .portfolio-card-luxury, .testimonial-card-luxury, .nav-home-btn') : null;
+
+      if (activeHoveredElement && activeHoveredElement !== currentInteractive) {
+        activeHoveredElement = null;
+        gsap.to(ring, {
+          scale: 1,
+          backgroundColor: 'transparent',
+          borderColor: 'rgba(28, 28, 26, 0.18)',
+          duration: 0.3,
+          overwrite: 'auto'
+        });
+        gsap.to(dot, {
+          scale: 1,
+          backgroundColor: '#e37000',
+          duration: 0.3,
+          overwrite: 'auto'
+        });
+      }
     };
 
-    // Attach listeners to interactive elements
-    const updateListeners = () => {
-      const links = document.querySelectorAll('a, button, .portrait-card, .stack-card-luxury, .portfolio-card-luxury, .testimonial-card-luxury, .nav-home-btn');
-      links.forEach((link) => {
-        link.addEventListener('mouseenter', handleMouseEnterLink);
-        link.addEventListener('mouseleave', handleMouseLeaveLink);
-      });
-    };
-
-    // Run on mount
-    updateListeners();
-
-    // Re-attach listeners periodically to capture dynamically rendered elements
-    const interval = setInterval(updateListeners, 1500);
+    document.body.addEventListener('pointerover', handlePointerOver);
+    document.body.addEventListener('pointerout', handlePointerOut);
 
     return () => {
       document.body.classList.remove('custom-cursor-active');
       window.removeEventListener('mousemove', handleMouseMove);
       cancelAnimationFrame(animId);
-      clearInterval(interval);
-      
-      const links = document.querySelectorAll('a, button, .portrait-card, .stack-card-luxury, .portfolio-card-luxury, .testimonial-card-luxury, .nav-home-btn');
-      links.forEach((link) => {
-        link.removeEventListener('mouseenter', handleMouseEnterLink);
-        link.removeEventListener('mouseleave', handleMouseLeaveLink);
-      });
+      document.body.removeEventListener('pointerover', handlePointerOver);
+      document.body.removeEventListener('pointerout', handlePointerOut);
     };
   }, [enabled]);
 

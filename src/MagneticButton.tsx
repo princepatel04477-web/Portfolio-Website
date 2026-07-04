@@ -26,8 +26,16 @@ const MagneticButton = ({
     const element = wrapperRef.current;
     if (!element) return;
 
+    let rect: DOMRect | null = null;
+
+    const handleMouseEnter = () => {
+      rect = element.getBoundingClientRect();
+    };
+
     const handleMouseMove = (e: MouseEvent) => {
-      const rect = element.getBoundingClientRect();
+      if (!rect) {
+        rect = element.getBoundingClientRect();
+      }
       const centerX = rect.left + rect.width / 2;
       const centerY = rect.top + rect.height / 2;
       
@@ -59,6 +67,7 @@ const MagneticButton = ({
     };
 
     const handleMouseLeave = () => {
+      rect = null;
       // Elastic spring back on mouse leave
       gsap.to(element, {
         x: 0,
@@ -70,11 +79,13 @@ const MagneticButton = ({
       });
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    element.addEventListener('mouseenter', handleMouseEnter);
+    element.addEventListener('mousemove', handleMouseMove);
     element.addEventListener('mouseleave', handleMouseLeave);
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
+      element.removeEventListener('mouseenter', handleMouseEnter);
+      element.removeEventListener('mousemove', handleMouseMove);
       element.removeEventListener('mouseleave', handleMouseLeave);
     };
   }, [range, strength]);
