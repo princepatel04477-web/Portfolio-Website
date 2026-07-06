@@ -69,14 +69,14 @@ const CustomCursor = () => {
         activeHoveredElement = interactive;
         gsap.to(ring, {
           scale: 1.6,
-          backgroundColor: 'rgba(227, 112, 0, 0.06)',
-          borderColor: 'rgba(227, 112, 0, 0.35)',
+          backgroundColor: 'rgba(197, 168, 128, 0.06)',
+          borderColor: 'rgba(197, 168, 128, 0.35)',
           duration: 0.3,
           overwrite: 'auto'
         });
         gsap.to(dot, {
           scale: 0.5,
-          backgroundColor: '#e37000',
+          backgroundColor: '#C5A880',
           duration: 0.3,
           overwrite: 'auto'
         });
@@ -98,7 +98,7 @@ const CustomCursor = () => {
         });
         gsap.to(dot, {
           scale: 1,
-          backgroundColor: '#e37000',
+          backgroundColor: '#C5A880',
           duration: 0.3,
           overwrite: 'auto'
         });
@@ -130,7 +130,7 @@ const CustomCursor = () => {
           left: -4,
           width: '8px',
           height: '8px',
-          backgroundColor: '#e37000',
+          backgroundColor: '#C5A880',
           borderRadius: '50%',
           zIndex: 9999,
           pointerEvents: 'none',

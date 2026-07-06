@@ -99,6 +99,20 @@ const Hero = () => {
       let mouseY = 0;
       let targetX = 0;
       let targetY = 0;
+      let prevTargetX = -9999;
+      let prevTargetY = -9999;
+      let isHeroVisible = true;
+
+      // Intersection Observer to monitor Hero section visibility
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          isHeroVisible = entry.isIntersecting;
+        });
+      }, { threshold: 0.05 });
+
+      if (containerRef.current) {
+        observer.observe(containerRef.current);
+      }
 
       const handleMouseMove = (e: MouseEvent) => {
         mouseX = (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2);
@@ -109,33 +123,47 @@ const Hero = () => {
 
       let animId = 0;
       const tick = () => {
+        if (!isHeroVisible) {
+          animId = requestAnimationFrame(tick);
+          return;
+        }
+
         targetX += (mouseX - targetX) * 0.08;
         targetY += (mouseY - targetY) * 0.08;
 
-        if (leftColRef.current && rightColRef.current) {
-          gsap.set(leftColRef.current, {
-            x: targetX * -12,
-            y: targetY * -8
-          });
-          gsap.set(rightColRef.current, {
-            x: targetX * -12,
-            y: targetY * -8
-          });
-        }
+        const diffX = Math.abs(targetX - prevTargetX);
+        const diffY = Math.abs(targetY - prevTargetY);
 
-        if (canvasContainerRef.current) {
-          gsap.set(canvasContainerRef.current, {
-            x: targetX * -8,
-            y: targetY * -8
-          });
-        }
+        // OPTIMIZATION: Only write to DOM if target has changed significantly, preventing layout thrashing when mouse is stationary
+        if (diffX > 0.0005 || diffY > 0.0005) {
+          prevTargetX = targetX;
+          prevTargetY = targetY;
 
-        // Drifting radial spotlight behind the card wrapper
-        if (mouseGlowRef.current) {
-          gsap.set(mouseGlowRef.current, {
-            x: targetX * 50,
-            y: targetY * 50
-          });
+          if (leftColRef.current && rightColRef.current) {
+            gsap.set(leftColRef.current, {
+              x: targetX * -12,
+              y: targetY * -8
+            });
+            gsap.set(rightColRef.current, {
+              x: targetX * -12,
+              y: targetY * -8
+            });
+          }
+
+          if (canvasContainerRef.current) {
+            gsap.set(canvasContainerRef.current, {
+              x: targetX * -8,
+              y: targetY * -8
+            });
+          }
+
+          // Drifting radial spotlight behind the card wrapper
+          if (mouseGlowRef.current) {
+            gsap.set(mouseGlowRef.current, {
+              x: targetX * 50,
+              y: targetY * 50
+            });
+          }
         }
 
         animId = requestAnimationFrame(tick);
@@ -146,6 +174,7 @@ const Hero = () => {
       return () => {
         window.removeEventListener('mousemove', handleMouseMove);
         cancelAnimationFrame(animId);
+        observer.disconnect();
       };
     });
 

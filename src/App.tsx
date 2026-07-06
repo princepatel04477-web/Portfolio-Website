@@ -2,12 +2,13 @@ import { useEffect, useState, useRef } from 'react';
 import Lenis from 'lenis';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Home, Calendar, Copy, FileText, Check, ArrowUpRight, Award } from 'lucide-react';
+import { Home, Calendar, Copy, FileText, Check, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import Hero from './Hero';
 import MagneticButton from './MagneticButton';
 import CustomCursor from './CustomCursor';
+import FeatureCarousel from './components/ui/feature-carousel';
 
 // Register ScrollTrigger
 gsap.registerPlugin(ScrollTrigger);
@@ -182,7 +183,7 @@ const servicesList: ServiceItem[] = [
   }
 ];
 
-const projectsList: ProjectItem[] = [
+export const projectsList: ProjectItem[] = [
   {
     title: "Varunya Technologies",
     category: "Agency Website / AI & Technology",
@@ -444,8 +445,23 @@ function App() {
   const [activeSection, setActiveSection] = useState('home');
   const [copied, setCopied] = useState(false);
   const [activeServiceIndex, setActiveServiceIndex] = useState(0);
+  const [activeProjectIndex, setActiveProjectIndex] = useState(0);
   const globalParticlesRef = useRef<HTMLCanvasElement>(null);
   const currentAccentRef = useRef('16, 185, 129');
+  const portfolioScrollTriggerRef = useRef<any>(null);
+
+  const handleProjectIndexChange = (index: number) => {
+    const trigger = portfolioScrollTriggerRef.current;
+    if (trigger && lenis) {
+      const scrollStart = trigger.start;
+      const scrollEnd = trigger.end;
+      const scrollLength = scrollEnd - scrollStart;
+      const targetScroll = scrollStart + ((index + 0.5) / 5) * scrollLength;
+      lenis.scrollTo(targetScroll, { duration: 1.2 });
+    } else {
+      setActiveProjectIndex(index);
+    }
+  };
 
   // Global particle animation loop inheriting accent color
   useEffect(() => {
@@ -472,6 +488,9 @@ function App() {
     resize();
 
     // Create 60 floating particles
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
     for (let i = 0; i < 60; i++) {
       particles.push({
         x: Math.random() * canvas.width,
@@ -484,6 +503,10 @@ function App() {
     }
 
     const draw = () => {
+      if (document.hidden) {
+        animationId = requestAnimationFrame(draw);
+        return;
+      }
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
       // OPTIMIZATION: Read from mutable ref instead of running heavy getComputedStyle on every single frame!
@@ -702,12 +725,12 @@ function App() {
     // ScrollTrigger 4: Slow background color and ambient accent system transition
     // ----------------------------------------------------
     const ambientColors = [
-      { bg: '#050816', accent1: '16, 185, 129', accent2: '59, 130, 246', accent3: '139, 92, 246' }, // 1. Home (Emerald + Blue + Violet)
-      { bg: '#05091a', accent1: '59, 130, 246', accent2: '79, 70, 229', accent3: '139, 92, 246' },  // 2. Skills (Blue + Indigo + Violet)
-      { bg: '#050c18', accent1: '13, 148, 136', accent2: '6, 182, 212', accent3: '59, 130, 246' },  // 3. About (Teal + Cyan + Blue)
-      { bg: '#070518', accent1: '139, 92, 246', accent2: '79, 70, 229', accent3: '59, 130, 246' },  // 4. Projects (Violet + Indigo + Blue)
-      { bg: '#120905', accent1: '245, 158, 11', accent2: '249, 115, 22', accent3: '239, 68, 68' },  // 5. Reviews (Amber + Orange + Red)
-      { bg: '#050816', accent1: '16, 185, 129', accent2: '59, 130, 246', accent3: '139, 92, 246' }, // 6. Contact (Emerald + Blue + Violet)
+      { bg: '#08080c', accent1: '197, 168, 128', accent2: '58, 68, 84', accent3: '113, 128, 150' }, // 1. Home (Champagne + Slate + Platinum)
+      { bg: '#09090f', accent1: '185, 155, 107', accent2: '65, 78, 99', accent3: '128, 140, 160' },  // 2. Skills (Warm Gold + Muted Navy)
+      { bg: '#0b0c13', accent1: '197, 168, 128', accent2: '58, 68, 84', accent3: '113, 128, 150' },  // 3. About (Champagne + Slate + Platinum)
+      { bg: '#0a0a0f', accent1: '185, 155, 107', accent2: '65, 78, 99', accent3: '128, 140, 160' },  // 4. Projects (Warm Gold + Muted Navy)
+      { bg: '#08080c', accent1: '197, 168, 128', accent2: '58, 68, 84', accent3: '113, 128, 150' },  // 5. Reviews (Champagne + Slate + Platinum)
+      { bg: '#09090f', accent1: '185, 155, 107', accent2: '65, 78, 99', accent3: '128, 140, 160' },  // 6. Contact (Warm Gold + Muted Navy)
     ];
 
     const bgColorsTrigger = ScrollTrigger.create({
@@ -811,6 +834,28 @@ function App() {
       }
     });
 
+    // ----------------------------------------------------
+    // ScrollTrigger 6.5: Portfolio Section Pinning
+    // ----------------------------------------------------
+    const portfolioTrigger = ScrollTrigger.create({
+      id: 'portfolio-trigger',
+      trigger: '.portfolio-cards-stack-wrapper',
+      start: 'top top',
+      end: 'bottom bottom',
+      pin: '.portfolio-cards-stack-track',
+      scrub: true,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+      onUpdate: (self) => {
+        const progress = self.progress;
+        const totalProjects = 5;
+        const index = Math.min(totalProjects - 1, Math.floor(progress * totalProjects));
+        setActiveProjectIndex(index);
+      }
+    });
+
+    portfolioScrollTriggerRef.current = portfolioTrigger;
+
     ScrollTrigger.refresh();
 
     return () => {
@@ -821,6 +866,8 @@ function App() {
       fadeTl.scrollTrigger?.kill();
       cardsTl.scrollTrigger?.kill();
       bgColorsTrigger.kill();
+      portfolioTrigger.kill();
+      portfolioScrollTriggerRef.current = null;
       revealTriggers.forEach(t => t.kill());
       staggerTriggers.forEach(t => t.kill());
     };
@@ -1105,87 +1152,50 @@ function App() {
       </section>
 
       {/* 4. Portfolio Section */}
-      <section id="portfolio" className="content-section section">
-        <div className="section-grid">
-          <div>
-            <div className="section-title-sub handwritten-label reveal-text">/ Selected Work</div>
-            <h2 className="section-title reveal-text" style={{ marginTop: '0.5rem' }}>
-              Projects That Turn Ideas Into Results
-            </h2>
-          </div>
-          <div className="section-body" style={{ justifyContent: 'center' }}>
-            <p className="reveal-text">
-              A collection of products, platforms, and digital experiences built across technology, finance, fashion, and enterprise industries.
-            </p>
-          </div>
-        </div>
-
-        {/* Statistics Grid */}
-        <div className="project-stats-grid max-width-wrapper reveal-text" style={{ maxWidth: '1200px', margin: '3rem auto 0' }}>
-          <div className="project-stat-item">
-            <span className="stat-number">5+</span>
-            <span className="stat-label">Projects Delivered</span>
-          </div>
-          <div className="project-stat-item">
-            <span className="stat-number">3+</span>
-            <span className="stat-label">Industries Served</span>
-          </div>
-          <div className="project-stat-item">
-            <span className="stat-number">100%</span>
-            <span className="stat-label">Responsive Design</span>
-          </div>
-          <div className="project-stat-item">
-            <span className="stat-number">Pure</span>
-            <span className="stat-label">Performance Focused</span>
-          </div>
-        </div>
-
-        {/* Dynamic Project Cards Grid */}
-        <div className="projects-list-grid max-width-wrapper stagger-container" style={{ maxWidth: '1200px', margin: '4rem auto 0' }}>
-          {projectsList.map((p, idx) => (
-            <div key={idx} className="project-card-luxury stagger-item">
-              <div className="project-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', width: '100%' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                  <span className="project-category-badge">{p.category}</span>
-                  <h3 className="project-card-title">{p.title}</h3>
-                </div>
-                <MagneticButton>
-                  <a 
-                    href={p.link} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="project-action-btn"
-                    aria-label={`Visit ${p.title} website`}
-                  >
-                    <ArrowUpRight size={18} />
-                  </a>
-                </MagneticButton>
+      <section id="portfolio" className="skills-stack-section">
+        <div className="portfolio-cards-stack-wrapper">
+          <div className="portfolio-cards-stack-track">
+            <div className="section-grid" style={{ marginBottom: '1.5rem' }}>
+              <div>
+                <div className="section-title-sub handwritten-label reveal-text">/ Selected Work</div>
+                <h2 className="section-title reveal-text" style={{ marginTop: '0.5rem' }}>
+                  Projects That Turn Ideas Into Results
+                </h2>
               </div>
-              <p className="project-card-desc" style={{ marginTop: '1rem' }}>{p.desc}</p>
-              
-              <div className="project-divider" />
-              
-              <div className="project-details">
-                <div className="project-tech-stack">
-                  <span className="detail-heading">Tech Stack</span>
-                  <div className="tech-badges">
-                    {p.tech.map((t, tIdx) => (
-                      <span key={tIdx} className="tech-badge">{t}</span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="project-highlights">
-                  <span className="detail-heading">Impact Highlights</span>
-                  <ul className="highlight-list">
-                    {p.highlights.map((h, hIdx) => (
-                      <li key={hIdx} className="highlight-item">{h}</li>
-                    ))}
-                  </ul>
-                </div>
+              <div className="section-body" style={{ justifyContent: 'center' }}>
+                <p className="reveal-text">
+                  A collection of products, platforms, and digital experiences built across technology, finance, fashion, and enterprise industries.
+                </p>
               </div>
             </div>
-          ))}
+
+            {/* Statistics Grid */}
+            <div className="project-stats-grid max-width-wrapper reveal-text" style={{ maxWidth: '1200px', margin: '0 auto 2rem' }}>
+              <div className="project-stat-item">
+                <span className="stat-number">5+</span>
+                <span className="stat-label">Projects Delivered</span>
+              </div>
+              <div className="project-stat-item">
+                <span className="stat-number">3+</span>
+                <span className="stat-label">Industries Served</span>
+              </div>
+              <div className="project-stat-item">
+                <span className="stat-number">100%</span>
+                <span className="stat-label">Responsive Design</span>
+              </div>
+              <div className="project-stat-item">
+                <span className="stat-number">Pure</span>
+                <span className="stat-label">Performance Focused</span>
+              </div>
+            </div>
+
+            {/* Feature Carousel for Projects */}
+            <div className="max-width-wrapper stagger-container" style={{ maxWidth: '1200px', margin: '0 auto' }}>
+              <div className="stagger-item">
+                <FeatureCarousel currentIndex={activeProjectIndex} onIndexChange={handleProjectIndexChange} />
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

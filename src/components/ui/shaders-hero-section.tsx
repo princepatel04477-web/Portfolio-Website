@@ -12,17 +12,15 @@ interface ShaderBackgroundProps {
 export function ShaderBackground({ children }: ShaderBackgroundProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [hasWebGL, setHasWebGL] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
-
   useEffect(() => {
-    setIsMobile(window.innerWidth <= 768);
+    const mobile = window.innerWidth <= 768;
     try {
       const canvas = document.createElement('canvas');
       const supported = !!(
         window.WebGL2RenderingContext &&
         canvas.getContext('webgl2')
       );
-      setHasWebGL(supported);
+      setHasWebGL(supported && !mobile);
     } catch (e) {
       setHasWebGL(false);
     }
@@ -30,16 +28,16 @@ export function ShaderBackground({ children }: ShaderBackgroundProps) {
 
   return (
     <div ref={containerRef} className="min-h-screen w-full relative overflow-hidden">
-      {/* Background Shaders in Midnight Emerald Theme */}
+      {/* Background Shaders in Premium Obsidian & Champagne Theme */}
       {hasWebGL ? (
         <MeshGradient
           className="absolute inset-0 w-full h-full"
-          colors={["#050816", "#0b0f19", "#0F172A", "#10B981", "#3B82F6", "#042f2e"]}
-          speed={0.12}
-          maxPixelCount={isMobile ? 120000 : 400000}
+          colors={["#08080c", "#0b0b10", "#14151a", "#C5A880", "#3a4454", "#1b1d24"]}
+          speed={0.08}
+          maxPixelCount={400000}
         />
       ) : (
-        <div className="absolute inset-0 w-full h-full bg-[#050816] overflow-hidden">
+        <div className="absolute inset-0 w-full h-full bg-[#08080c] overflow-hidden">
           {/* Hardware-Accelerated Dynamic Blurry Blobs for Mobile Fallback */}
           <div className="mobile-blob blob-1" />
           <div className="mobile-blob blob-2" />
