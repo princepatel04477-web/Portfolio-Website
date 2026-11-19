@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { motion } from "framer-motion";
 import {
   GlobalSearchIcon,
@@ -9,13 +10,14 @@ import {
   MagicWandIcon,
 } from "@hugeicons/core-free-icons";
 import { cn } from "../../lib/utils";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
+import { ProjectImage } from "./ProjectImage";
 
 export interface CarouselFeature {
   id: string;
   slug: string;
   label: string;
-  icon: any;
+  icon: IconSvgElement;
   image: string;
   description: string;
   link?: string;
@@ -73,7 +75,7 @@ const FEATURES: CarouselFeature[] = [
     slug: "nifty-pulse",
     label: "NiftyPulse",
     icon: DashboardSquare01Icon,
-    image: "/project_thumb/Nifty%20Pulse.png",
+    image: "/project_thumb/Nifty Pulse.png",
     description: "Indian stock-market analytics with live indices, sector heatmap and dual LLM insights.",
     link: "https://root-six-gamma.vercel.app",
     repo: "https://github.com/princepatel04477-web",
@@ -194,13 +196,15 @@ export function FeatureCarousel({
                   )}
                 >
                   <div
-                    className="carousel-card-image-container cursor-pointer"
+                    className="carousel-card-image-container cursor-pointer overflow-hidden rounded-xl"
                     onClick={() => onSelectProject && onSelectProject(feature.slug)}
                   >
-                    <img
+                    <ProjectImage
                       src={feature.image}
                       alt={feature.label}
-                      className="carousel-card-image"
+                      width={800}
+                      height={500}
+                      className="carousel-card-image w-full h-full object-cover"
                     />
                   </div>
 

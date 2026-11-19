@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ExternalLink, CheckCircle2, Layers, Cpu, Award } from 'lucide-react';
 import { Github } from './Icons';
+import { ProjectImage } from './ProjectImage';
 import type { Project } from '../../data/projects';
 
 interface ProjectModalProps {
@@ -82,9 +83,11 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
             <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-8 custom-scrollbar">
               {/* Media Thumbnail */}
               <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/10 bg-black/40">
-                <img
+                <ProjectImage
                   src={project.thumbnail}
                   alt={project.title}
+                  width={800}
+                  height={500}
                   className="h-full w-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c12] via-transparent to-transparent opacity-80" />

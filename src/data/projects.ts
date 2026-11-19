@@ -10,19 +10,19 @@ export type ProjectStatus = "Live" | "Prototype" | "In Development";
 export interface Project {
   slug: string;
   title: string;
-  oneLiner: string;          // max ~90 chars, outcome-focused
-  problem: string;           // 1–2 sentences: what problem it solves
-  role: string;              // "Solo build", "Lead dev", "Founder & CTO" …
-  stack: string[];           // ["Next.js", "FastAPI", "OpenAI"]
+  oneLiner: string;
+  problem: string;
+  role: string;
+  stack: string[];
   category: ProjectCategory;
   year: number;
   status: ProjectStatus;
   liveUrl?: string;
   githubUrl?: string;
-  thumbnail: string;         // /project_thumb/<slug>_thumbnail.png
+  thumbnail: string;
   gallery?: string[];
-  metrics?: string[];        // ["10k+ images processed", "Lighthouse 98"]
-  featured: boolean;         // Top featured projects
+  metrics?: string[];
+  featured: boolean;
   highlights: string[];
   caseStudy: string;
 }
@@ -50,7 +50,7 @@ export const projects: Project[] = [
     liveUrl: "https://stesurat.com",
     thumbnail: "/project_thumb/STE_thumbnail.png",
     gallery: ["/project_thumb/STE_thumbnail.png"],
-    metrics: ["179 Exhibitors onboarded", "100% automated logo ingestion", "Zero billing discrepancy"],
+    metrics: ["179 Exhibitors onboarded"],
     featured: true,
     highlights: [
       "Exhibitor portal with a logo-collection pipeline, proforma billing for extras and data export",
@@ -63,17 +63,16 @@ export const projects: Project[] = [
   {
     slug: "tradex",
     title: "TRADEX (Tradly)",
-    oneLiner: "An AI/ML forex intelligence and risk-free paper-trading platform.",
+    oneLiner: "An AI/ML forex intelligence and paper-trading platform.",
     problem: "Retail forex traders need high-probability setups and safe simulation environments driven by predictive machine learning market signals rather than risky guesswork.",
     role: "AI/ML Engineer & Full-Stack Developer",
-    stack: ["Next.js", "Python / FastAPI", "Neon Postgres", "Render", "Vercel", "Scikit-Learn"],
+    stack: ["Next.js", "Render", "Neon Postgres", "Vercel"],
     category: "Fintech",
     year: 2026,
     status: "Live",
     liveUrl: "https://tradex-main.vercel.app",
     thumbnail: "/project_thumb/tradex_thumbnail.svg",
     gallery: ["/project_thumb/tradex_thumbnail.svg"],
-    metrics: ["Multi-service distributed architecture", "Sub-100ms API latency", "Zero capital risk simulation"],
     featured: true,
     highlights: [
       "Paper-trading engine with AI-driven market analysis",
@@ -95,7 +94,6 @@ export const projects: Project[] = [
     liveUrl: "https://trivoxa-group.pages.dev",
     thumbnail: "/project_thumb/trivoxa_thumbnail.svg",
     gallery: ["/project_thumb/trivoxa_thumbnail.svg"],
-    metrics: ["60 FPS 3D canvas interaction", "Sub-second enquiry dispatch", "Dual-division unified identity"],
     featured: true,
     highlights: [
       "Persistent cross-route morphing 3D object in React Three Fiber",
@@ -117,7 +115,7 @@ export const projects: Project[] = [
     liveUrl: "https://aqualite.aqualite.workers.dev",
     thumbnail: "/project_thumb/aqualite_thumbnail.svg",
     gallery: ["/project_thumb/aqualite_thumbnail.svg"],
-    metrics: ["Edge-deployed on Cloudflare Workers", "High-frequency motion engine", "Full inventory control"],
+    metrics: ["Edge-deployed on Cloudflare Workers"],
     featured: true,
     highlights: [
       "End-to-end storefront plus admin panel",
@@ -132,21 +130,21 @@ export const projects: Project[] = [
     oneLiner: "Luxury jewellery storefront with secure in-house admin & 150+ CAD AI photoshoot pipeline.",
     problem: "Physical jewelry lifestyle photoshoots are prohibitively expensive and time-consuming, while bare CAD renders lack emotional appeal and photorealistic sparkle.",
     role: "AI Workflow Architect & Full-Stack Developer",
-    stack: ["Next.js", "AI Diffusion / ControlNet", "SQLite", "iron-session", "Vercel", "Tailwind CSS"],
+    stack: ["Google Flow (Nano Banana) · ChatGPT image generation", "Next.js", "SQLite", "iron-session", "Tailwind CSS"],
     category: "AI & Automation",
     year: 2026,
     status: "Live",
     liveUrl: "https://civara-jewels.vercel.app",
     thumbnail: "/project_thumb/civara_thumbnail.svg",
     gallery: ["/project_thumb/civara_thumbnail.svg"],
-    metrics: ["150+ CAD models converted", "90% cost reduction vs studio shoots", "LAN-secured admin"],
+    metrics: ["150+ CAD models converted"],
     featured: true,
     highlights: [
       "Transformed 150+ jewellery CAD renders into photorealistic catalogue images",
       "Premium luxury jewellery storefront with rich motion",
       "Admin panel with iron-session auth and LAN-only access"
     ],
-    caseStudy: "Civara's site presents its ring, pendant and earring collections in a premium storefront. Behind it is an admin panel that only works on the company's local network, with session-based authentication, so the catalogue can be managed safely in-house. The product imagery comes from an AI photoshoot pipeline that converted 150+ raw CAD renders into hyper-realistic editorial catalog shots."
+    caseStudy: "Civara's site presents its ring, pendant and earring collections in a premium storefront. Behind it is an admin panel that only works on the company's local network, with session-based authentication, so the catalogue can be managed safely in-house. Real CAD renders were composited onto AI-generated backdrops so the jewellery design is never altered, converting 150+ raw models into catalogue-ready imagery."
   },
   {
     slug: "nifty-pulse",
@@ -162,7 +160,6 @@ export const projects: Project[] = [
     githubUrl: "https://github.com/princepatel04477-web",
     thumbnail: "/project_thumb/Nifty Pulse.png",
     gallery: ["/project_thumb/Nifty Pulse.png"],
-    metrics: ["Sub-50ms inference via Groq", "Real-time NSE sector heatmap", "Dual LLM sentiment comparison"],
     featured: true,
     highlights: [
       "Live indices, sector heatmap and stock screener",
@@ -184,7 +181,6 @@ export const projects: Project[] = [
     liveUrl: "https://varunyatechnologies.com/",
     thumbnail: "/project_thumb/Varunya_thumbnail.png",
     gallery: ["/project_thumb/Varunya_thumbnail.png"],
-    metrics: ["15+ client builds completed", "8 industries served", "Proprietary design system"],
     featured: false,
     highlights: [
       "Void Obsidian design system (#0A0A0B with gold #C9A961) used across all agency work",
@@ -207,7 +203,6 @@ export const projects: Project[] = [
     liveUrl: "https://manasvifashionsurat.com/",
     thumbnail: "/project_thumb/manasvi_thumbnail.png",
     gallery: ["/project_thumb/manasvi_thumbnail.png"],
-    metrics: ["100% mobile-first checkout", "Custom ethnic wear variant matrix", "Fluid smooth-scroll boutique UX"],
     featured: false,
     highlights: [
       "Catalogue with variants, checkout and admin dashboard",
@@ -229,7 +224,6 @@ export const projects: Project[] = [
     liveUrl: "https://www.shiveshwartextiles.com/",
     thumbnail: "/project_thumb/Shivehswar_textiles.png",
     gallery: ["/project_thumb/Shivehswar_textiles.png"],
-    metrics: ["Sub-second initial load", "International B2B enquiry generation", "Showcase of 100+ fabric varieties"],
     featured: false,
     highlights: [
       "Fully animated landing experience with performance focus",
@@ -251,7 +245,6 @@ export const projects: Project[] = [
     liveUrl: "https://maa-sheetla.pages.dev",
     thumbnail: "/project_thumb/sunrise_thumbnail.svg",
     gallery: ["/project_thumb/sunrise_thumbnail.svg"],
-    metrics: ["$0 monthly maintenance cost", "100% automated asset optimization", "Unified dual-firm brand presence"],
     featured: false,
     highlights: [
       "30-asset image system with art direction and an automated Sharp build",
@@ -273,7 +266,6 @@ export const projects: Project[] = [
     liveUrl: "https://aurelia-sandy-five.vercel.app",
     thumbnail: "/project_thumb/aurelia_thumbnail.svg",
     gallery: ["/project_thumb/aurelia_thumbnail.svg"],
-    metrics: ["Ultra-high fidelity luxury interaction", "Zero-friction 3D viewports", "Showcase concept"],
     featured: false,
     highlights: [
       "Cinematic 3D WebGL luxury jewellery interaction",
@@ -295,7 +287,6 @@ export const projects: Project[] = [
     liveUrl: "https://arvex-pharma.pages.dev",
     thumbnail: "/project_thumb/arvex_thumbnail.svg",
     gallery: ["/project_thumb/arvex_thumbnail.svg"],
-    metrics: ["Lighthouse 99 score", "Edge-routed API handling", "Regulatory catalog structure"],
     featured: false,
     highlights: [
       "Production-ready static prototype with optimized enquiry endpoint",
@@ -316,7 +307,6 @@ export const projects: Project[] = [
     status: "In Development",
     thumbnail: "/project_thumb/cafeos_thumbnail.svg",
     gallery: ["/project_thumb/cafeos_thumbnail.svg"],
-    metrics: ["Zero app download needed for diners", "Real-time kitchen order ticket dispatch", "Multi-tenant tenant isolation"],
     featured: false,
     highlights: [
       "Multi-tenant: platform, owner and staff roles",
@@ -337,7 +327,6 @@ export const projects: Project[] = [
     status: "In Development",
     thumbnail: "/project_thumb/schoolstore_thumbnail.svg",
     gallery: ["/project_thumb/schoolstore_thumbnail.svg"],
-    metrics: ["Native Android experience", "Predictive sizing engine", "Cost-effective cloud hosting"],
     featured: false,
     highlights: [
       "Native Android application with custom sizing algorithm",
@@ -352,13 +341,12 @@ export const projects: Project[] = [
     oneLiner: "Files by Google, rebuilt for the modern Windows desktop.",
     problem: "Default desktop file explorers are bloated, sluggish, and lack automated smart cleanup for cache, duplicate downloads, and orphaned directories.",
     role: "Desktop Software Engineer",
-    stack: ["TypeScript", "Electron / Rust", "React", "Tailwind CSS"],
+    stack: [],
     category: "Platforms & Products",
     year: 2026,
     status: "In Development",
     thumbnail: "/project_thumb/sift_thumbnail.svg",
     gallery: ["/project_thumb/sift_thumbnail.svg"],
-    metrics: ["Zero bloat architecture", "Clean touch & mouse UI", "Intelligent cache categorization"],
     featured: false,
     highlights: [
       "Files by Google inspired UX for Windows desktop",
@@ -368,24 +356,21 @@ export const projects: Project[] = [
     caseStudy: "Sift brings the simplicity of Android's Files by Google to Windows: fast browsing and smart cleanup. Built phase by phase against a written spec with lightweight native speed."
   },
   {
-    slug: "eventflow",
-    title: "EventFlow — Event Management Software",
-    oneLiner: "Modern event coordination software with automated badge and itinerary dispatch.",
-    problem: "Conference and expo organizers face chaotic badge printing queues and disconnected attendee notification channels.",
+    slug: "nuvent",
+    title: "Nuvent — Event Management Software",
+    oneLiner: "Event management software built under Varunya Technologies.",
+    problem: "Event management software built under Varunya Technologies.",
     role: "Full-Stack Architect",
-    stack: ["Next.js", "Node.js", "PostgreSQL", "Tailwind CSS", "Redis"],
+    stack: [],
     category: "Platforms & Products",
     year: 2026,
     status: "In Development",
-    thumbnail: "/project_thumb/eventflow_thumbnail.svg",
-    gallery: ["/project_thumb/eventflow_thumbnail.svg"],
-    metrics: ["Fast QR check-in pipeline", "Scalable to 10k+ attendees", "Automated email notifications"],
+    thumbnail: "/project_thumb/nuvent_thumbnail.svg",
+    gallery: ["/project_thumb/nuvent_thumbnail.svg"],
     featured: false,
     highlights: [
-      "Automated badge printing and QR attendance verification",
-      "Real-time schedule synchronization and attendee messaging",
-      "Exhibitor lead tracking integration"
+      "Event management software built under Varunya Technologies"
     ],
-    caseStudy: "Event management software built under Varunya Technologies to streamline ticketing, exhibitor coordination, and attendee flow across large scale conferences."
+    caseStudy: "Event management software built under Varunya Technologies."
   }
 ];

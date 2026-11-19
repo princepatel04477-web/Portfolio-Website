@@ -1,10 +1,9 @@
 import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowDown, Mail, Terminal } from 'lucide-react';
+import { ArrowDown, Mail } from 'lucide-react';
 import { ShaderBackground } from './ui/shaders-hero-section';
 import { SplitText } from './ui/SplitText';
 import { RotatingText } from './ui/RotatingText';
-import { CountUp } from './ui/CountUp';
 import { Magnet } from './ui/Magnet';
 import LiveClock from './Hero/LiveClock';
 import PortraitCard from './Hero/PortraitCard';
@@ -69,12 +68,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             {/* Rotating Role Line */}
             <div className="flex items-center gap-2 text-xl sm:text-2xl md:text-3xl font-medium text-zinc-300">
               <span className="text-zinc-500 font-mono text-base sm:text-xl">
-                I am an
+                I am
               </span>
               <RotatingText
                 texts={[
-                  "AI Engineer",
-                  "Full-Stack Developer",
+                  "an AI Engineer",
+                  "a Full-Stack Developer",
                   "Founder, Varunya Technologies"
                 ]}
               />
@@ -126,7 +125,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             transition={{ duration: 0.6, delay: 0.4 }}
             className="pt-2 flex items-center gap-2 text-xs text-zinc-400 font-mono"
           >
-            <Terminal size={14} className="text-accent" />
             <LiveClock />
           </motion.div>
         </div>
@@ -151,7 +149,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           {profile.stats.map((stat, i) => (
             <div key={i} className="flex flex-col space-y-1">
               <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white font-mono flex items-baseline">
-                <CountUp to={stat.value} duration={1.6} suffix={stat.suffix} />
+                {stat.value}
               </div>
               <span className="text-xs text-zinc-400 font-medium tracking-wide">
                 {stat.label}

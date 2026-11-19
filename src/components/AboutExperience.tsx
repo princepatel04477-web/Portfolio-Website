@@ -83,7 +83,6 @@ export const AboutExperience: React.FC = () => {
               Work Experience &amp; <span className="text-accent">Leadership</span>
             </h3>
           </div>
-          <span className="text-xs text-zinc-500 font-mono">Verified career timeline</span>
         </div>
 
         <div className="space-y-6">
@@ -151,8 +150,7 @@ export const AboutExperience: React.FC = () => {
                   {cert.title}
                 </h4>
               </div>
-              <div className="flex items-center justify-between pt-4 mt-2 border-t border-white/5 text-[11px] text-zinc-400">
-                <span className="font-mono">Verified Credential</span>
+              <div className="flex items-center justify-end pt-4 mt-2 border-t border-white/5 text-[11px] text-zinc-400">
                 <Award size={15} className="text-accent" />
               </div>
             </div>

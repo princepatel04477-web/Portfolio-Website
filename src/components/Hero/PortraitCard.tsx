@@ -123,9 +123,10 @@ export const PortraitCard: React.FC<PortraitCardProps> = ({
               
               {/* Card Back Face */}
               <div className="scroll-card-face scroll-card-back">
-                <div className="dark-card-overlay">
-                  <span className="overlay-name">Prince Patel</span>
-                  <span className="overlay-role">AI Engineer &amp; CTO</span>
+                <div className="dark-card-overlay flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-full border border-white/10 bg-white/[0.03] flex items-center justify-center font-mono text-xs text-accent">
+                    PP
+                  </div>
                 </div>
               </div>
             </div>

@@ -20,7 +20,6 @@ export interface CertificationItem {
 export interface ReviewItem {
   quote: string;
   author: string;
-  role: string;
   company: string;
 }
 
@@ -33,8 +32,8 @@ export interface TechItem {
 export const profile = {
   name: "Prince Patel",
   roles: [
-    "AI Engineer",
-    "Full-Stack Developer",
+    "an AI Engineer",
+    "a Full-Stack Developer",
     "Founder, Varunya Technologies"
   ],
   tagline: "Engineering Scalable Intelligence & High-Fidelity Digital Platforms",
@@ -50,10 +49,10 @@ export const profile = {
     "Every build is engineered with zero bloat, rigorous type safety, fluid motion, and verifiable business impact."
   ],
   stats: [
-    { value: 15, suffix: "+", label: "Projects Built" },
-    { value: 10, suffix: "+", label: "Live Websites" },
-    { value: 8, suffix: "", label: "Industries Served" },
-    { value: 100, suffix: "%", label: "Production Uptime" }
+    { value: "15+", label: "Projects Built" },
+    { value: "10+", label: "Live Websites" },
+    { value: "8", label: "Industries" },
+    { value: "Founder", label: "Varunya Technologies" }
   ],
   socials: {
     github: "https://github.com/princepatel04477-web",
@@ -70,9 +69,7 @@ export const profile = {
       loc: "Surat, India",
       bullets: [
         "Founded and run an AI and digital agency, leading engineering and design of all client projects spanning textiles, jewellery, fashion, pharma and events.",
-        "Delivered production platforms including STE 2026 (portal and website), Trivoxa Group, Aqualite Footwear, Civara Jewels, and Manasvi Fashion.",
-        "Architected an AI photoshoot pipeline that converted 150+ jewellery CAD renders into hyper-realistic commercial catalogue images.",
-        "Created the Void Obsidian brand system and automated programmatic content production pipelines."
+        "Delivered production platforms including STE 2026 (portal and website), Trivoxa Group, Aqualite Footwear, Civara Jewels, and Manasvi Fashion."
       ]
     },
     {
@@ -81,9 +78,8 @@ export const profile = {
       date: "June 2026 – October 2026",
       loc: "Ahmedabad, India",
       bullets: [
-        "Architected TRADEX, an AI/ML forex intelligence and paper-trading platform.",
-        "Split production services across Vercel (frontend), Render (FastAPI backend), and Neon Postgres.",
-        "Integrated machine learning market sentiment and predictive algorithmic indicators for simulated trade strategies."
+        "Built TRADEX, an AI/ML forex intelligence and paper-trading platform, as the core internship project.",
+        "Deployed it across Vercel (frontend), Render (API) and Neon Postgres (database)."
       ]
     },
     {
@@ -91,10 +87,7 @@ export const profile = {
       company: "Bluestock Fintech",
       date: "October 2025 – January 2026",
       loc: "Pune, India (Remote)",
-      bullets: [
-        "Engineered financial analytics modules and responsive data-visualization widgets for equity screeners.",
-        "Optimized frontend bundle and API request lifecycles for low-latency market charting tools."
-      ]
+      bullets: []
     }
   ] as CareerItem[],
   certifications: [
@@ -123,29 +116,24 @@ export const profile = {
     {
       quote: "Prince designed and engineered a flawless digital experience for the Surat Textile Exhibition. The interactive exhibitor showcase, dynamic registration flows, and premium visual identity elevated our event presence. His attention to performance is unmatched.",
       author: "Bharat Haryani",
-      role: "Operations Director",
       company: "Surat Textile Exhibition (STE 2026)"
     },
     {
       quote: "The e-commerce platform developed for Manasvi Fashion Surat has completely transformed our business operations. Prince created a highly responsive, mobile-first experience with a sleek admin dashboard and seamless product catalog. Recommended!",
       author: "Rahul Navapara",
-      role: "Director",
       company: "Manasvi Fashion Surat"
     },
     {
       quote: "We needed a corporate website that communicates trust and showcases our manufacturing scale globally. Prince built a modern, highly optimized product showcase for Shiveshwar Textiles. Outstanding design quality and speed of execution.",
       author: "Parth Mangukiya",
-      role: "Managing Director",
       company: "Shiveshwar Textiles"
     }
   ] as ReviewItem[],
   techStack: [
-    // AI / ML
+    // AI / ML (PyTorch & Scikit-Learn removed)
     { name: "Python", category: "AI / ML", logo: "https://cdn.simpleicons.org/python/3776AB" },
-    { name: "PyTorch", category: "AI / ML", logo: "https://cdn.simpleicons.org/pytorch/EE4C2C" },
     { name: "FastAPI", category: "AI / ML", logo: "https://cdn.simpleicons.org/fastapi/009688" },
     { name: "Ollama", category: "AI / ML", logo: "https://cdn.simpleicons.org/ollama/FFFFFF" },
-    { name: "Scikit-Learn", category: "AI / ML", logo: "https://cdn.simpleicons.org/scikitlearn/F7931E" },
     
     // Frontend
     { name: "React", category: "Frontend", logo: "https://cdn.simpleicons.org/react/61DAFB" },
@@ -155,11 +143,10 @@ export const profile = {
     { name: "GSAP", category: "Frontend", logo: "https://cdn.simpleicons.org/greensock/88CE02" },
     { name: "Three.js", category: "Frontend", logo: "https://cdn.simpleicons.org/threedotjs/FFFFFF" },
 
-    // Backend
+    // Backend (Redis removed)
     { name: "Node.js", category: "Backend", logo: "https://cdn.simpleicons.org/nodedotjs/339933" },
     { name: "Supabase", category: "Backend", logo: "https://cdn.simpleicons.org/supabase/3ECF8E" },
     { name: "PostgreSQL", category: "Backend", logo: "https://cdn.simpleicons.org/postgresql/4169E1" },
-    { name: "Redis", category: "Backend", logo: "https://cdn.simpleicons.org/redis/DC382D" },
 
     // Cloud & DevOps
     { name: "Cloudflare", category: "Database & Cloud", logo: "https://cdn.simpleicons.org/cloudflare/F38020" },

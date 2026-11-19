@@ -12,6 +12,7 @@ import FeatureCarousel from './components/ui/feature-carousel';
 import { ProjectModal } from './components/ui/ProjectModal';
 import { AllProjects } from './components/AllProjects';
 import { projects, type Project } from './data/projects';
+import { profile } from './data/profile';
 
 // Register ScrollTrigger
 gsap.registerPlugin(ScrollTrigger);
@@ -47,9 +48,12 @@ function WordReveal({ text, className }: { text: string; className?: string }) {
 
   return (
     <p ref={containerRef} className={className} aria-label={text}>
-      {text.split(' ').map((word, idx) => (
-        <span key={idx} className="reveal-word" style={{ display: 'inline-block', marginRight: '0.28em', willChange: 'opacity, transform' }}>
-          {word}&nbsp;
+      {text.split(' ').map((word, idx, arr) => (
+        <span key={idx}>
+          <span className="reveal-word" style={{ display: 'inline-block', willChange: 'opacity, transform' }}>
+            {word}
+          </span>
+          {idx < arr.length - 1 ? ' ' : ''}
         </span>
       ))}
     </p>
@@ -68,32 +72,7 @@ interface ServiceItem {
   offset: string;
 }
 
-interface ProjectItem {
-  title: string;
-  category: string;
-  desc: string;
-  tech: string[];
-  highlights: string[];
-  link: string;
-}
 
-interface CareerItem {
-  role: string;
-  company: string;
-  date: string;
-  loc: string;
-}
-
-interface ReviewItem {
-  quote: string;
-  author: string;
-  role: string;
-}
-
-interface CertificationItem {
-  title: string;
-  issuer: string;
-}
 
 const servicesList: ServiceItem[] = [
   {
@@ -186,145 +165,7 @@ const servicesList: ServiceItem[] = [
   }
 ];
 
-const _projectsList: ProjectItem[] = [
-  {
-    title: "Varunya Technologies",
-    category: "Agency Website / AI & Technology",
-    desc: "A modern digital agency website built to showcase AI solutions, website development, digital products, and technology services. Designed with a premium visual identity and optimized for client acquisition.",
-    tech: ["React", "TypeScript", "Tailwind CSS", "GSAP", "Vercel"],
-    highlights: [
-      "Premium agency branding",
-      "Modern UI/UX design",
-      "Service showcase architecture",
-      "Lead generation focused",
-      "Fully responsive",
-      "Performance optimized"
-    ],
-    link: "https://varunyatechnologies.com/"
-  },
-  {
-    title: "Manasvi Fashion",
-    category: "Fashion E-Commerce Platform",
-    desc: "A modern fashion commerce platform built for a Surat-based clothing brand. The platform focuses on elegant product presentation, inventory management, and seamless shopping experiences.",
-    tech: ["Next.js", "TypeScript", "Tailwind CSS", "Supabase", "Razorpay"],
-    highlights: [
-      "Fashion-focused UI",
-      "Product variant management",
-      "Admin dashboard",
-      "Mobile-first experience",
-      "Secure online payments",
-      "Inventory management"
-    ],
-    link: "https://manasvifashionsurat.com/"
-  },
-  {
-    title: "Surat Textile Exhibition",
-    category: "B2B Event Platform",
-    desc: "A premium digital platform designed for one of Surat's textile industry exhibitions. Built to connect exhibitors, buyers, and industry professionals through a modern digital experience.",
-    tech: ["React", "Next.js", "Tailwind CSS", "TypeScript"],
-    highlights: [
-      "Event management experience",
-      "Exhibitor showcase",
-      "Visitor information system",
-      "Professional business branding",
-      "Responsive design",
-      "Premium presentation"
-    ],
-    link: "https://stefinalprototype.vercel.app/"
-  },
-  {
-    title: "Shiveshwar Textiles",
-    category: "Textile Manufacturing Website",
-    desc: "A professional textile industry website developed to showcase products, manufacturing capabilities, and business information while building trust among global buyers.",
-    tech: ["React", "TypeScript", "Tailwind CSS"],
-    highlights: [
-      "Product catalog showcase",
-      "Corporate branding",
-      "Business inquiry system",
-      "Mobile responsive",
-      "SEO friendly",
-      "Industry-focused design"
-    ],
-    link: "https://www.shiveshwartextiles.com/"
-  },
-  {
-    title: "Nifty Pulse",
-    category: "FinTech Dashboard",
-    desc: "An intelligent stock market analytics platform that provides traders with market insights, technical analysis, and data-driven decision-making tools through an intuitive interface.",
-    tech: ["React", "TypeScript", "Tailwind CSS", "Financial APIs", "Charts"],
-    highlights: [
-      "Market analytics dashboard",
-      "Real-time data visualization",
-      "Technical analysis tools",
-      "Advanced charting",
-      "Modern fintech UI",
-      "Performance optimized"
-    ],
-    link: "https://root-six-gamma.vercel.app/"
-  }
-];
 
-const careerTimeline: CareerItem[] = [
-  {
-    role: "Founder & CTO",
-    company: "Varunya Technologies",
-    date: "June 2026 – Present",
-    loc: "Surat, India"
-  },
-  {
-    role: "AI/ML Engineer Intern",
-    company: "ThinkNovus Private Limited",
-    date: "June 2026 – October 2026",
-    loc: "Ahmedabad, India"
-  },
-  {
-    role: "SDE Intern",
-    company: "Bluestock Fintech",
-    date: "October 2025 – January 2026",
-    loc: "Pune, India (Remote)"
-  }
-];
-
-const clientReviews: ReviewItem[] = [
-  {
-    quote: "Prince designed and engineered a flawless digital experience for the Surat Textile Exhibition. The interactive exhibitor showcase, dynamic registration flows, and premium visual identity elevated our event presence. His attention to performance is unmatched.",
-    author: "Bharat Haryani",
-    role: "Surat Textile Exhibition"
-  },
-  {
-    quote: "The e-commerce platform developed for Manasvi Fashion Surat has completely transformed our business operations. Prince created a highly responsive, mobile-first experience with a sleek admin dashboard and seamless product catalog. Recommended!",
-    author: "Rahul Navapara",
-    role: "Manasvi Fashion Surat"
-  },
-  {
-    quote: "We needed a corporate website that communicates trust and showcases our manufacturing scale globally. Prince built a modern, highly optimized product showcase for Shiveshwar Textiles. Outstanding design quality and speed of execution.",
-    author: "Parth Mangukiya",
-    role: "Shiveshwar Textiles"
-  }
-];
-
-const certificationsList: CertificationItem[] = [
-  {
-    title: "Accenture North America - Data Analytics and Visualization Job Simulation",
-    issuer: "Accenture / Forage"
-  },
-  {
-    title: "Large Language Model",
-    issuer: "DeepLearning.AI / Coursera"
-  },
-  {
-    title: "Machine Learning for Data Science Projects",
-    issuer: "Coursera"
-  },
-  {
-    title: "Python for Data Science, AI & Development",
-    issuer: "IBM"
-  },
-  {
-    title: "Business Intelligence and Analytics (BUS250)",
-    issuer: "P P Savani University / Coursera"
-  }
-];
 
 interface MarqueeSkillItem {
   name: string;
@@ -452,7 +293,7 @@ function App() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const globalParticlesRef = useRef<HTMLCanvasElement>(null);
   const currentAccentRef = useRef('16, 185, 129');
-  const portfolioScrollTriggerRef = useRef<any>(null);
+  const portfolioScrollTriggerRef = useRef<ScrollTrigger | null>(null);
 
   const handleProjectIndexChange = (index: number) => {
     const trigger = portfolioScrollTriggerRef.current;
@@ -953,14 +794,17 @@ function App() {
       <div className="sections-container">
         {/* 1. Hero Section */}
         <div id="home" className="section">
-          <Hero />
+          <Hero 
+            onExploreWork={() => scrollTo('#portfolio')}
+            onContactClick={() => scrollTo('#contact')}
+          />
         </div>
 
       {/* 2. Services Section */}
       <section id="skills" className="skills-stack-section section">
         <div className="services-cards-stack-wrapper">
           <div className="services-cards-stack-track">
-            <div className="skills-sticky-grid">
+            <div className="skills-sticky-grid site-container">
               {/* Left Side: Title & Description */}
               <div className="skills-sticky-left">
                 <div className="section-title-sub handwritten-label reveal-text">/ Services, Skills, Abilities</div>
@@ -1043,7 +887,7 @@ function App() {
       </section>
 
       {/* 3. About Me Section */}
-      <section id="about" className="content-section section">
+      <section id="about" className="content-section section site-container">
         <div className="section-grid">
           <div>
             <div className="section-title-sub handwritten-label reveal-text">/ About Me</div>
@@ -1123,7 +967,7 @@ function App() {
       </section>
 
       {/* Certifications Section */}
-      <section id="certifications" className="content-section section">
+      <section id="certifications" className="content-section section site-container">
         <div className="section-grid">
           <div>
             <div className="section-title-sub handwritten-label reveal-text">/ Credentials</div>
@@ -1139,7 +983,7 @@ function App() {
         </div>
 
         <div className="certifications-grid max-width-wrapper stagger-container" style={{ maxWidth: '1200px', margin: '4rem auto 0' }}>
-          {certificationsList.map((cert, idx) => (
+          {profile.certifications.map((cert, idx) => (
             <div key={idx} className="certification-card-luxury stagger-item">
               <div className="cert-card-header">
                 <span className="cert-issuer-badge">{cert.issuer}</span>
@@ -1158,7 +1002,7 @@ function App() {
       {/* 4. Portfolio Section */}
       <section id="portfolio" className="skills-stack-section">
         <div className="portfolio-cards-stack-wrapper">
-          <div className="portfolio-cards-stack-track">
+          <div className="portfolio-cards-stack-track site-container">
             <div className="section-grid" style={{ marginBottom: '1.5rem' }}>
               <div>
                 <div className="section-title-sub handwritten-label reveal-text">/ Selected Work</div>
@@ -1176,7 +1020,7 @@ function App() {
             {/* Statistics Grid */}
             <div className="project-stats-grid max-width-wrapper reveal-text" style={{ maxWidth: '1200px', margin: '0 auto 2rem' }}>
               <div className="project-stat-item">
-                <span className="stat-number">15+</span>
+                <span className="stat-number">{projects.length}+</span>
                 <span className="stat-label">Projects Built</span>
               </div>
               <div className="project-stat-item">
@@ -1185,7 +1029,7 @@ function App() {
               </div>
               <div className="project-stat-item">
                 <span className="stat-number">8</span>
-                <span className="stat-label">Industries Served</span>
+                <span className="stat-label">Industries</span>
               </div>
               <div className="project-stat-item">
                 <span className="stat-number">Founder</span>
@@ -1217,7 +1061,7 @@ function App() {
       </section>
 
       {/* 5. Reviews/Testimonials Section */}
-      <section id="reviews" className="content-section section">
+      <section id="reviews" className="content-section section site-container">
         <div className="section-grid">
           <div>
             <div className="section-title-sub handwritten-label reveal-text">/ Community Trust – Testimonials</div>
@@ -1225,19 +1069,19 @@ function App() {
           </div>
           <div className="section-body" style={{ justifyContent: 'center' }}>
             <p className="reveal-text">
-              A few thoughts from people who have experienced the value of working together.
+              What clients say.
             </p>
           </div>
         </div>
 
         {/* Testimonials grid list */}
         <div className="testimonials-list max-width-wrapper stagger-container" style={{ maxWidth: '1200px', margin: '4rem auto 0' }}>
-          {clientReviews.map((r, idx) => (
+          {profile.testimonials.map((r, idx) => (
             <div key={idx} className="testimonial-card-luxury stagger-item">
               <p className="testimonial-quote">{r.quote}</p>
               <div className="testimonial-meta">
                 <span className="testimonial-author">{r.author}</span>
-                <span className="testimonial-role">{r.role}</span>
+                <span className="testimonial-role">{r.company}</span>
               </div>
             </div>
           ))}
@@ -1245,7 +1089,7 @@ function App() {
       </section>
 
       {/* 6. Contact / Careers Section */}
-      <section id="contact" className="content-section section">
+      <section id="contact" className="content-section section site-container">
         <div className="section-grid">
           <div>
             <div className="section-title-sub handwritten-label reveal-text">/ Career</div>
@@ -1260,11 +1104,20 @@ function App() {
 
         {/* Career Horizontal List */}
         <div className="career-timeline-container stagger-container">
-          {careerTimeline.map((c, idx) => (
+          {profile.careerTimeline.map((c, idx) => (
             <div key={idx} className="career-entry-row stagger-item">
               <div className="career-entry-left">
                 <span className="career-entry-role">{c.role}</span>
                 <span className="career-entry-company">{c.company}</span>
+                {c.bullets && c.bullets.length > 0 && (
+                  <ul className="career-entry-bullets mt-2 space-y-1">
+                    {c.bullets.map((b, bIdx) => (
+                      <li key={bIdx} className="text-xs text-zinc-400 list-disc list-inside">
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
               <div className="career-entry-right">
                 <span className="career-entry-date">{c.date}</span>

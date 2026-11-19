@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ExternalLink, Layers, ArrowUpRight } from 'lucide-react';
 import { Github } from './ui/Icons';
 import { SpotlightCard } from './ui/SpotlightCard';
+import { ProjectImage } from './ui/ProjectImage';
 import { CATEGORIES, type Project } from '../data/projects';
 
 interface AllProjectsProps {
@@ -32,7 +33,7 @@ export const AllProjects: React.FC<AllProjectsProps> = ({ projects, onSelectProj
   }, [projects, selectedCategory, searchQuery]);
 
   return (
-    <section id="projects" className="relative w-full py-24 px-4 sm:px-6 md:px-12 max-w-7xl mx-auto border-t border-white/5">
+    <section id="projects" className="relative w-full py-24 site-container border-t border-white/5">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
         <div>
@@ -43,7 +44,7 @@ export const AllProjects: React.FC<AllProjectsProps> = ({ projects, onSelectProj
             All Projects &amp; <span className="text-accent">Systems</span>
           </h2>
           <p className="mt-3 text-sm sm:text-base text-zinc-400 max-w-xl">
-            Explore 16+ production platforms, client websites, trading engines, and proprietary tools built across 8 distinct industries.
+            Explore {projects.length} production platforms, client websites, trading engines, and proprietary tools built across 8 industries.
           </p>
         </div>
 
@@ -134,13 +135,14 @@ export const AllProjects: React.FC<AllProjectsProps> = ({ projects, onSelectProj
                   className="cursor-pointer group flex flex-col justify-between h-full p-6"
                 >
                   <div className="space-y-4">
-                    {/* Media Thumbnail */}
+                    {/* Media Thumbnail with fallback */}
                     <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl border border-white/10 bg-black/40">
-                      <img
+                      <ProjectImage
                         src={project.thumbnail}
                         alt={project.title}
+                        width={800}
+                        height={500}
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        loading="lazy"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
 
@@ -164,6 +166,15 @@ export const AllProjects: React.FC<AllProjectsProps> = ({ projects, onSelectProj
                           {project.status}
                         </span>
                       </div>
+
+                      {/* Key Metric Chip if available */}
+                      {project.metrics && project.metrics[0] && (
+                        <div className="absolute bottom-2.5 left-2.5 right-2.5">
+                          <div className="inline-flex items-center gap-1.5 rounded-lg bg-black/75 px-2.5 py-1 text-[10px] font-medium text-accent border border-accent/25 backdrop-blur-md">
+                            <span className="truncate">{project.metrics[0]}</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     {/* Title & One-Liner */}
@@ -180,28 +191,31 @@ export const AllProjects: React.FC<AllProjectsProps> = ({ projects, onSelectProj
 
                   {/* Stack & Links */}
                   <div className="pt-4 mt-4 border-t border-white/5 flex flex-col gap-3">
-                    <div className="flex flex-wrap gap-1">
-                      {project.stack.slice(0, 3).map((tech, i) => (
-                        <span
-                          key={i}
-                          className="rounded-md border border-white/5 bg-white/[0.03] px-2 py-0.5 text-[10px] font-mono text-zinc-400"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                      {project.stack.length > 3 && (
-                        <span className="rounded-md border border-white/5 bg-white/[0.02] px-2 py-0.5 text-[10px] font-mono text-zinc-500">
-                          +{project.stack.length - 3}
-                        </span>
-                      )}
-                    </div>
+                    {project.stack.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {project.stack.slice(0, 3).map((tech, i) => (
+                          <span
+                            key={i}
+                            className="rounded-md border border-white/5 bg-white/[0.03] px-2 py-0.5 text-[10px] font-mono text-zinc-400"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                        {project.stack.length > 3 && (
+                          <span className="rounded-md border border-white/5 bg-white/[0.02] px-2 py-0.5 text-[10px] font-mono text-zinc-500">
+                            +{project.stack.length - 3}
+                          </span>
+                        )}
+                      </div>
+                    )}
 
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-accent group-hover:underline text-[11px] font-semibold">
+                    {/* Card Footer: Details & Case Study never clipped */}
+                    <div className="flex items-center justify-between text-xs pt-1 min-h-[28px]">
+                      <span className="text-accent group-hover:underline text-[11px] font-semibold whitespace-nowrap shrink-0 pr-2">
                         Details &amp; Case Study
                       </span>
 
-                      <div className="flex items-center gap-2.5" onClick={(e) => e.stopPropagation()}>
+                      <div className="flex items-center gap-2.5 shrink-0" onClick={(e) => e.stopPropagation()}>
                         {project.githubUrl && (
                           <a
                             href={project.githubUrl}

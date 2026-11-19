@@ -32,6 +32,41 @@
   --bottom-nav-height: 80px;
 }
 
+/* Global Container (PASS 2 - Item 15) */
+.site-container {
+  max-width: 1280px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: clamp(20px, 5vw, 64px) !important;
+  padding-right: clamp(20px, 5vw, 64px) !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Hero Badge Container (PASS 2 - Item 17) */
+.hero-badge-container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* Hero Action Buttons (PASS 2 - Item 18) */
+.hero-cta-buttons {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: flex !important;
+  align-items: center;
+  gap: 0.75rem;
+  z-index: 10;
+}
+
+/* Hero Stats Strip (PASS 1 - Item 3 & PASS 2 - Item 18) */
+.hero-stats-strip-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
 /* Global Ambient Background, Particles & Noise */
 .ambient-bg-layer {
   position: fixed;
