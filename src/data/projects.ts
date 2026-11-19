@@ -248,7 +248,7 @@ export const projects: Project[] = [
     category: "Client Websites",
     year: 2026,
     status: "Live",
-    liveUrl: "https://sunrisefabtex.com",
+    liveUrl: "https://maa-sheetla.pages.dev",
     thumbnail: "/project_thumb/sunrise_thumbnail.svg",
     gallery: ["/project_thumb/sunrise_thumbnail.svg"],
     metrics: ["$0 monthly maintenance cost", "100% automated asset optimization", "Unified dual-firm brand presence"],
