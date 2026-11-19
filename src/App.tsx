@@ -1,17 +1,16 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import Lenis from 'lenis';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Home, Calendar, Copy, FileText, Check, Award } from 'lucide-react';
+import { Home, Calendar, Copy, FileText, Check, Award, ArrowRight, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import Hero from './Hero';
 import MagneticButton from './MagneticButton';
 import CustomCursor from './CustomCursor';
-import FeatureCarousel from './components/ui/feature-carousel';
+import { FlexCarousel, type FlexCarouselItem } from './components/ui/FlexCarousel';
 import { ProjectModal } from './components/ui/ProjectModal';
-import { AllProjects } from './components/AllProjects';
-import { projects, type Project } from './data/projects';
+import { projects, CATEGORIES, type Project, type ProjectCategory } from './data/projects';
 import { profile } from './data/profile';
 
 // Register ScrollTrigger
@@ -290,23 +289,27 @@ function App() {
   const [copied, setCopied] = useState(false);
   const [activeServiceIndex, setActiveServiceIndex] = useState(0);
   const [activeProjectIndex, setActiveProjectIndex] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState<"All" | ProjectCategory>("All");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const globalParticlesRef = useRef<HTMLCanvasElement>(null);
   const currentAccentRef = useRef('16, 185, 129');
-  const portfolioScrollTriggerRef = useRef<ScrollTrigger | null>(null);
 
-  const handleProjectIndexChange = (index: number) => {
-    const trigger = portfolioScrollTriggerRef.current;
-    if (trigger && lenis) {
-      const scrollStart = trigger.start;
-      const scrollEnd = trigger.end;
-      const scrollLength = scrollEnd - scrollStart;
-      const targetScroll = scrollStart + ((index + 0.5) / 6) * scrollLength;
-      lenis.scrollTo(targetScroll, { duration: 1.2 });
-    } else {
-      setActiveProjectIndex(index);
-    }
-  };
+  const filteredProjects = useMemo(() => {
+    if (selectedCategory === "All") return projects;
+    return projects.filter(p => p.category === selectedCategory);
+  }, [selectedCategory]);
+
+  const carouselItems: FlexCarouselItem[] = useMemo(() => {
+    return filteredProjects.map((p) => ({
+      src: p.thumbnail,
+      alt: p.title,
+      title: p.title,
+      subtitle: `${p.category} • ${p.status}`,
+      project: p
+    }));
+  }, [filteredProjects]);
+
+  const activeProject = filteredProjects[activeProjectIndex] || filteredProjects[0] || projects[0];
 
   // Global particle animation loop inheriting accent color
   useEffect(() => {
@@ -679,28 +682,6 @@ function App() {
       }
     });
 
-    // ----------------------------------------------------
-    // ScrollTrigger 6.5: Portfolio Section Pinning
-    // ----------------------------------------------------
-    const portfolioTrigger = ScrollTrigger.create({
-      id: 'portfolio-trigger',
-      trigger: '.portfolio-cards-stack-wrapper',
-      start: 'top top',
-      end: 'bottom bottom',
-      pin: '.portfolio-cards-stack-track',
-      scrub: true,
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
-      onUpdate: (self) => {
-        const progress = self.progress;
-        const totalProjects = 6;
-        const index = Math.min(totalProjects - 1, Math.floor(progress * totalProjects));
-        setActiveProjectIndex(index);
-      }
-    });
-
-    portfolioScrollTriggerRef.current = portfolioTrigger;
-
     ScrollTrigger.refresh();
 
     return () => {
@@ -711,8 +692,6 @@ function App() {
       fadeTl.scrollTrigger?.kill();
       cardsTl.scrollTrigger?.kill();
       bgColorsTrigger.kill();
-      portfolioTrigger.kill();
-      portfolioScrollTriggerRef.current = null;
       revealTriggers.forEach(t => t.kill());
       staggerTriggers.forEach(t => t.kill());
     };
@@ -999,65 +978,156 @@ function App() {
         </div>
       </section>
 
-      {/* 4. Portfolio Section */}
-      <section id="portfolio" className="skills-stack-section">
-        <div className="portfolio-cards-stack-wrapper">
-          <div className="portfolio-cards-stack-track site-container">
-            <div className="section-grid" style={{ marginBottom: '1.5rem' }}>
-              <div>
-                <div className="section-title-sub handwritten-label reveal-text">/ Selected Work</div>
-                <h2 className="section-title reveal-text" style={{ marginTop: '0.5rem' }}>
-                  Projects That Turn Ideas Into Results
-                </h2>
-              </div>
-              <div className="section-body" style={{ justifyContent: 'center' }}>
-                <p className="reveal-text">
-                  A collection of products, platforms, and digital experiences built across technology, finance, fashion, and enterprise industries.
-                </p>
-              </div>
-            </div>
-
-            {/* Statistics Grid */}
-            <div className="project-stats-grid max-width-wrapper reveal-text" style={{ maxWidth: '1200px', margin: '0 auto 2rem' }}>
-              <div className="project-stat-item">
-                <span className="stat-number">{projects.length}+</span>
-                <span className="stat-label">Projects Built</span>
-              </div>
-              <div className="project-stat-item">
-                <span className="stat-number">10+</span>
-                <span className="stat-label">Live Websites</span>
-              </div>
-              <div className="project-stat-item">
-                <span className="stat-number">8</span>
-                <span className="stat-label">Industries</span>
-              </div>
-              <div className="project-stat-item">
-                <span className="stat-number">Founder</span>
-                <span className="stat-label">Varunya Technologies</span>
-              </div>
-            </div>
-
-            {/* Feature Carousel for Projects */}
-            <div className="max-width-wrapper stagger-container" style={{ maxWidth: '1200px', margin: '0 auto' }}>
-              <div className="stagger-item">
-                <FeatureCarousel
-                  currentIndex={activeProjectIndex}
-                  onIndexChange={handleProjectIndexChange}
-                  onSelectProject={(slug) => {
-                    const p = projects.find((item) => item.slug === slug);
-                    if (p) setSelectedProject(p);
-                  }}
-                />
-              </div>
-            </div>
+      {/* 4. Portfolio Section - Unified Single Showcase with React Bits FlexCarousel */}
+      <section id="portfolio" className="content-section section site-container py-16 sm:py-24">
+        <div className="section-grid" style={{ marginBottom: '2rem' }}>
+          <div>
+            <div className="section-title-sub handwritten-label reveal-text">/ Selected Work</div>
+            <h2 className="section-title reveal-text" style={{ marginTop: '0.5rem' }}>
+              Projects That Turn Ideas Into Results
+            </h2>
+          </div>
+          <div className="section-body" style={{ justifyContent: 'center' }}>
+            <p className="reveal-text">
+              A curated engineering showcase of {projects.length}+ production platforms, AI pipelines, and digital experiences across 8 industries.
+            </p>
           </div>
         </div>
 
-        {/* All Projects Archive & Catalogue */}
-        <AllProjects
-          projects={projects}
-          onSelectProject={(p) => setSelectedProject(p)}
-        />
+        {/* Category Filter Pills */}
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-8 reveal-text">
+          {CATEGORIES.map((cat) => {
+            const count = cat === "All" ? projects.length : projects.filter(p => p.category === cat).length;
+            const isActive = selectedCategory === cat;
+            return (
+              <button
+                key={cat}
+                onClick={() => {
+                  setSelectedCategory(cat);
+                  setActiveProjectIndex(0);
+                }}
+                className={`px-4 py-2 rounded-full text-xs sm:text-sm font-mono tracking-tight transition-all cursor-pointer ${
+                  isActive
+                    ? 'bg-[#c5a880] text-[#08080c] font-semibold shadow-[0_0_20px_rgba(197,168,128,0.35)] scale-105'
+                    : 'bg-white/[0.04] text-white/70 hover:text-white hover:bg-white/[0.08] border border-white/5'
+                }`}
+              >
+                {cat} <span className={`text-[11px] ml-1 ${isActive ? 'text-[#08080c]/80' : 'text-white/40'}`}>({count})</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* React Bits FlexCarousel */}
+        <div 
+          className="relative w-full rounded-3xl overflow-hidden border border-white/[0.08] bg-[#07070b]/60 backdrop-blur-md shadow-2xl reveal-text"
+          style={{ height: '560px', width: '100%', position: 'relative' }}
+        >
+          <FlexCarousel
+            items={carouselItems}
+            preset="liquid"
+            intro="rise"
+            cardHeight={0.52}
+            gap={16}
+            radius={16}
+            squeeze={0.18}
+            focusOnClick
+            captions
+            captureWheel={false}
+            onChange={(index) => {
+              setActiveProjectIndex(index);
+            }}
+            onSelect={(_index, item) => {
+              const p = item.project as Project;
+              if (p) setSelectedProject(p);
+            }}
+          />
+        </div>
+
+        {/* Active Project Spotlight Card */}
+        {activeProject && (
+          <div className="mt-8 reveal-text">
+            <div className="spotlight-card border border-white/10 rounded-2xl bg-[#0c0d14]/80 backdrop-blur-xl p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-2xl">
+              <div className="flex-1 space-y-3">
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium ${
+                    activeProject.status === 'Live' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-300 border border-amber-500/20'
+                  }`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${activeProject.status === 'Live' ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`}></span>
+                    {activeProject.status}
+                  </span>
+                  <span className="px-3 py-1 rounded-full text-xs font-mono bg-white/[0.04] text-[#C5A880] border border-[#C5A880]/20">
+                    {activeProject.category}
+                  </span>
+                  <span className="text-xs text-white/40 font-mono">
+                    {activeProject.year}
+                  </span>
+                  {activeProject.metrics && activeProject.metrics[0] && (
+                    <span className="px-3 py-1 rounded-full text-xs font-mono bg-[#c5a880]/10 text-[#d4af37] border border-[#c5a880]/25">
+                      ✦ {activeProject.metrics[0]}
+                    </span>
+                  )}
+                </div>
+
+                <div>
+                  <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                    {activeProject.title}
+                  </h3>
+                  <p className="text-sm sm:text-base text-white/70 mt-1 max-w-2xl leading-relaxed">
+                    {activeProject.oneLiner}
+                  </p>
+                </div>
+
+                {activeProject.stack && activeProject.stack.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                    {activeProject.stack.map((tech) => (
+                      <span key={tech} className="px-2.5 py-0.5 rounded text-[11px] font-mono bg-white/[0.03] text-white/60 border border-white/5">
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 shrink-0">
+                <button
+                  onClick={() => setSelectedProject(activeProject)}
+                  className="btn-primary-glow px-5 py-2.5 rounded-xl font-medium text-sm flex items-center gap-2 cursor-pointer transition-all hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap text-black bg-[#c5a880] hover:bg-[#d8bc94]"
+                >
+                  <span>View Details & Case Study</span>
+                  <ArrowRight size={15} />
+                </button>
+
+                {activeProject.liveUrl && (
+                  <a
+                    href={activeProject.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2.5 rounded-xl border border-white/10 hover:border-white/30 text-white/80 hover:text-white text-sm font-medium flex items-center gap-1.5 bg-white/[0.02] hover:bg-white/[0.06] transition-all whitespace-nowrap"
+                  >
+                    <span>Live Demo</span>
+                    <ExternalLink size={14} />
+                  </a>
+                )}
+
+                {activeProject.githubUrl && (
+                  <a
+                    href={activeProject.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2.5 rounded-xl border border-white/10 hover:border-white/30 text-white/80 hover:text-white text-sm font-medium flex items-center justify-center bg-white/[0.02] hover:bg-white/[0.06] transition-all"
+                    aria-label="View source on GitHub"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
+                      <path d="M9 18c-4.51 2-5-2-7-2"></path>
+                    </svg>
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* 5. Reviews/Testimonials Section */}
