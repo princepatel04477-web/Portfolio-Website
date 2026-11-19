@@ -9,6 +9,7 @@ import Hero from './Hero';
 import MagneticButton from './MagneticButton';
 import CustomCursor from './CustomCursor';
 import { FlexCarousel, type FlexCarouselItem } from './components/ui/FlexCarousel';
+import { ScrollExpand } from './components/ui/ScrollExpand';
 import { ProjectModal } from './components/ui/ProjectModal';
 import { projects, CATEGORIES, type Project, type ProjectCategory } from './data/projects';
 import { profile } from './data/profile';
@@ -976,6 +977,38 @@ function App() {
             </div>
           ))}
         </div>
+      </section>
+
+      {/* Editorial Chapter Break: ScrollExpand Transition */}
+      <section className="scroll-expand-transition-section">
+        <ScrollExpand
+          src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1600&q=80&auto=format&fit=crop"
+          alt="Engineering Architecture Visual"
+          title="Engineered to Scale"
+          scrollHint="Scroll to expand"
+          startWidth={48}
+          startHeight={60}
+          startRadius={24}
+          endRadius={0}
+          mediaZoom={1.25}
+          scrollDistance={1.0}
+          holdDistance={0.3}
+          smoothing={0.06}
+          overlayScrim={0.55}
+          useWindowScroll={true}
+        >
+          <div className="text-center space-y-4 max-w-2xl px-6">
+            <span className="text-xs uppercase tracking-widest font-mono text-[#c5a880]">
+              Varunya Technologies · Architecture &amp; Delivery
+            </span>
+            <h2 className="text-3xl sm:text-5xl font-bold text-white tracking-tight">
+              From Core Logic to Production Systems
+            </h2>
+            <p className="text-sm sm:text-base text-white/80 leading-relaxed font-sans">
+              Bridging high-performance engineering, intelligent pipelines, and flawless visual interfaces.
+            </p>
+          </div>
+        </ScrollExpand>
       </section>
 
       {/* 4. Portfolio Section - Unified Single Showcase with React Bits FlexCarousel */}
