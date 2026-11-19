@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://princepatel.dpdns.org/sitemap.xml

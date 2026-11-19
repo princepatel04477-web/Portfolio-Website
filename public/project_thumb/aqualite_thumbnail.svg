@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#14080a" />
+      <stop offset="100%" stop-color="#280f14" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+    </pattern>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="url(#bgGrad)" />
+  <rect width="100%" height="100%" fill="url(#grid)" />
+  
+  <!-- Ambient glow orb -->
+  <circle cx="400" cy="240" r="180" fill="#EF4444" opacity="0.08" filter="url(#glow)" />
+  
+  <!-- Icon / Graphics illustration -->
+  <g><path d="M180 320 Q 320 330 400 270 T 600 240 T 650 300 Q 520 340 380 350 Z" fill="#EF4444" opacity="0.25" stroke="#EF4444" stroke-width="3"/>
+           <path d="M220 300 Q 380 270 480 220 Q 580 190 620 250" fill="none" stroke="#FCA5A5" stroke-width="3" stroke-dasharray="8 8"/>
+           <circle cx="620" cy="250" r="7" fill="#EF4444" filter="url(#glow)"/></g>
+  
+  <!-- Content overlay -->
+  <g font-family="system-ui, -apple-system, sans-serif">
+    <!-- Tag -->
+    <rect x="40" y="40" width="140" height="26" rx="13" fill="#7F1D1D" opacity="0.6"/>
+    <text x="50" y="57" font-size="11" font-weight="700" fill="#EF4444" letter-spacing="1">E-COMMERCE & WORKERS</text>
+    
+    <!-- Title and Subtitle -->
+    <text x="40" y="420" font-size="28" font-weight="800" fill="#F8FAFC" letter-spacing="-0.5">Aqualite Footwear</text>
+    <text x="40" y="450" font-size="14" font-weight="400" fill="#94A3B8">Footwear Storefront with Seller Central-Style Admin</text>
+  </g>
+</svg>

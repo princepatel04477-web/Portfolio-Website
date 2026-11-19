@@ -14,7 +14,7 @@ const LiveClock: React.FC = () => {
       try {
         const timeString = new Date().toLocaleTimeString('en-US', options);
         setCurrentTime(`${timeString} GMT+5:30`);
-      } catch (e) {
+      } catch {
         const now = new Date();
         const hrs = String(now.getUTCHours() + 5).padStart(2, '0');
         const mins = String(now.getUTCMinutes() + 30).padStart(2, '0');

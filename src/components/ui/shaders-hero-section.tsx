@@ -21,7 +21,7 @@ export function ShaderBackground({ children }: ShaderBackgroundProps) {
         canvas.getContext('webgl2')
       );
       setHasWebGL(supported && !mobile);
-    } catch (e) {
+    } catch {
       setHasWebGL(false);
     }
   }, []);
@@ -61,7 +61,7 @@ export function PulsingCircle() {
         canvas.getContext('webgl2')
       );
       setHasWebGL(supported);
-    } catch (e) {
+    } catch {
       setHasWebGL(false);
     }
   }, []);
