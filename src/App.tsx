@@ -10,6 +10,7 @@ import MagneticButton from './MagneticButton';
 import CustomCursor from './CustomCursor';
 import { FlexCarousel, type FlexCarouselItem } from './components/ui/FlexCarousel';
 import { ScrollExpand } from './components/ui/ScrollExpand';
+import { FadeContent } from './components/ui/FadeContent';
 import { ProjectModal } from './components/ui/ProjectModal';
 import { projects, CATEGORIES, type Project, type ProjectCategory } from './data/projects';
 import { profile } from './data/profile';
@@ -962,7 +963,16 @@ function App() {
           </div>
         </div>
 
-        <div className="certifications-grid max-width-wrapper stagger-container" style={{ maxWidth: '1200px', margin: '4rem auto 0' }}>
+        <FadeContent
+          effect="focus"
+          blur={true}
+          duration={1.0}
+          ease="power2.out"
+          stagger={0.08}
+          threshold={0.1}
+          className="certifications-grid max-width-wrapper stagger-container"
+          style={{ maxWidth: '1200px', margin: '4rem auto 0' }}
+        >
           {profile.certifications.map((cert, idx) => (
             <div key={idx} className="certification-card-luxury stagger-item">
               <div className="cert-card-header">
@@ -976,7 +986,7 @@ function App() {
               </div>
             </div>
           ))}
-        </div>
+        </FadeContent>
       </section>
 
       {/* Editorial Chapter Break: ScrollExpand Transition */}
@@ -1177,8 +1187,16 @@ function App() {
           </div>
         </div>
 
-        {/* Testimonials grid list */}
-        <div className="testimonials-list max-width-wrapper stagger-container" style={{ maxWidth: '1200px', margin: '4rem auto 0' }}>
+        {/* Testimonials grid list with FadeContent mist effect */}
+        <FadeContent
+          effect="mist"
+          duration={1.4}
+          ease="power2.out"
+          stagger={0.12}
+          threshold={0.12}
+          className="testimonials-list max-width-wrapper stagger-container"
+          style={{ maxWidth: '1200px', margin: '4rem auto 0' }}
+        >
           {profile.testimonials.map((r, idx) => (
             <div key={idx} className="testimonial-card-luxury stagger-item">
               <p className="testimonial-quote">{r.quote}</p>
@@ -1188,7 +1206,7 @@ function App() {
               </div>
             </div>
           ))}
-        </div>
+        </FadeContent>
       </section>
 
       {/* 6. Contact / Careers Section */}
